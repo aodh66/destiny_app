@@ -1,11 +1,11 @@
 #root {
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  /* margin: 0 auto; */
+  /* padding: 2rem; */
   text-align: center;
 }
 
-.logo {
+/* .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
@@ -39,4 +39,87 @@
 
 .read-the-docs {
   color: #888;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.header {
+  display: flex;
+  min-width: 100vw;
+  justify-content: space-between;
+  align-items: center;
+  height: 4em;
+  border: 1px solid red;
+  
 }
+
+.logoname {
+  font-size: 2em;
+  color: rgb(255, 0, 255);
+  display: flex;
+  align-items: center;
+padding: 0 1em;
+/* margin: 0 2em; */
+/* margin-right: auto; */
+}
+
+/* .one {
+  font-family: "Major Mono Display", monospace;
+  display: flex;
+}
+
+.onel {
+  letter-spacing: -2.1rem;
+
+}
+
+.two {
+  font-family: "Josefin Sans", sans-serif;
+  display: flex;
+}
+
+.three {
+  font-family: "Expletus Sans", sans-serif;
+  display: flex;
+}
+
+.threel {
+  letter-spacing: -2rem;
+
+}
+
+.four {
+  font-family: "Protest Revolution", sans-serif;
+} */
+
+.five {
+  font-family: "Bruno Ace", sans-serif;
+}
+
+.loginBtn {
+  height: 3em;
+  padding: 0 2em;
+  margin: 0 2em;
+}
+
+/* .six {
+  font-family: "Italiana", sans-serif;
+  display: flex;
+}
+
+.sixl {
+  letter-spacing: -1.3rem;
+
+} */
