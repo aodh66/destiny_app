@@ -19,13 +19,19 @@ function App() {
         DiVA
   </div>
 
-  <button className='loginBtn'>Login</button>
+  <a href={import.meta.env.VITE_AUTHORISATION_URL}>
+    <button className='loginBtn'>Login</button>
+    {/* Login */}
+    </a>
+    {/* <button className='loginBtn'>Login</button> */}
   
     </div>
 
     <div className='content'>
       Character items here. Also inventory below.
     </div>
+    <p>need to add a redirect url and origin header on bungie app config</p>
+    {/* <button>Authorise</button> */}
       {/* <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -51,3 +57,20 @@ function App() {
 }
 
 export default App
+
+// ! test Bungie API call
+const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
+
+const xhr = new XMLHttpRequest();
+xhr.open("GET", "https://www.bungie.net/platform/Destiny/Manifest/InventoryItem/1274330687/", true);
+xhr.setRequestHeader("X-API-Key", apiKey);
+
+xhr.onreadystatechange = function(){
+ if(this.readyState === 4 && this.status === 200){
+  const json = JSON.parse(this.responseText);
+  console.log("🚀 ~ json:", json)
+  console.log(json.Response.data.inventoryItem.itemName); //Gjallarhorn
+ }
+}
+
+xhr.send();
