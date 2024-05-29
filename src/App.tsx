@@ -74,3 +74,18 @@ xhr.onreadystatechange = function(){
 }
 
 xhr.send();
+
+// on load
+// look at url
+// console.log(window.location.pathname)
+if(window.location.pathname) {
+  // console.log("🚀 ~ authCodeText:", authCodeText)
+  const authCodeText = window.location.pathname
+  const urlAuthCode = authCodeText.slice(6)
+  console.log("🚀 ~ urlAuthCode:", urlAuthCode)
+  localStorage.setItem("localauthCode", JSON.stringify(urlAuthCode));
+}
+// save the number to local storage
+const localCode = JSON.parse(localStorage.getItem("localauthCode")!);
+console.log("🚀 ~ localCode:", localCode)
+// use that number with each request
