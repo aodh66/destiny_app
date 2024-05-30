@@ -6,8 +6,8 @@ import './App.css'
 // import mainStyles from "./main.scss";
 
 function App() {
-  const [login, setLogin] = useState(false)
-  const [data, setData] = useState(null)
+  // const [login, setLogin] = useState(false)
+  // const [data, setData] = useState(null)
 
   return (
     <>
@@ -31,7 +31,7 @@ function App() {
     <div className='content'>
       Character items here. Also inventory below.
     </div>
-    <p>need to add a redirect url and origin header on bungie app config</p>
+    {/* <p>{login}</p> */}
     {/* <button>Authorise</button> */}
       {/* <div>
         <a href="https://vitejs.dev" target="_blank">
@@ -168,6 +168,7 @@ function getUserData() {
   xhr.addEventListener("readystatechange", function () {
     if (this.readyState === this.DONE) {
       console.log("Acc Data", this.responseText);
+      
     }
   });
   
