@@ -1,4 +1,4 @@
-// import { useState } from 'react'
+import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 // import "./main.scss";
@@ -6,7 +6,8 @@ import './App.css'
 // import mainStyles from "./main.scss";
 
 function App() {
-  // const [count, setCount] = useState(0)
+  const [login, setLogin] = useState(false)
+  const [data, setData] = useState(null)
 
   return (
     <>
@@ -103,8 +104,9 @@ export default App
           //   "expires_in": 3600,
           //   "membership_id": "14924801"
           // }
+          localStorage.setItem("localAuthToken", JSON.stringify(this.responseText));
           // ! Add timer to note that this will expire after 3600secs aka 1hr
-
+          // If you make it private OAuth, then you can get a refresh token, otherwise you will have to reauth every hour
         }
       });
   
@@ -114,7 +116,7 @@ export default App
   xhr.setRequestHeader("X-API-Key", apiKey);
   
   xhr.send(data);
-  
+  getUserData()
 }
 
 
@@ -129,10 +131,48 @@ export default App
 //   localStorage.setItem("localauthCode", JSON.stringify(urlAuthCode));
 // }
 // // save the number to local storage
-// const localCode = JSON.parse(localStorage.getItem("localauthCode")!);
+// const localCode = JSON.parse(localStorage.getItem("localAuthToken")!);
 // // console.log("🚀 ~ localCode:", localCode)
 // // use that number with each request
 
 
 
 
+
+
+
+// const data = null;
+
+// const xhr = new XMLHttpRequest();
+// xhr.withCredentials = true;
+
+// xhr.addEventListener("readystatechange", function () {
+//   if (this.readyState === this.DONE) {
+//     console.log("Acc Data", this.responseText);
+//   }
+// });
+
+// xhr.open("GET", "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/");
+// xhr.setRequestHeader("Authorization", `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!)}`);
+// xhr.setRequestHeader("X-API-Key", `${import.meta.env.VITE_BUNGIE_API_KEY}`);
+
+// xhr.send(data);
+
+
+
+function getUserData() {
+
+  const data = null;
+  const xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+  xhr.addEventListener("readystatechange", function () {
+    if (this.readyState === this.DONE) {
+      console.log("Acc Data", this.responseText);
+    }
+  });
+  
+  xhr.open("GET", "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/");
+  xhr.setRequestHeader("X-API-Key", `${import.meta.env.VITE_BUNGIE_API_KEY}`);
+  xhr.setRequestHeader("Authorization", `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!)}`);
+  xhr.send(data);
+}
