@@ -107,6 +107,7 @@ function App() {
   const [loginStatus, setloginStatus] = useState(false) // to track if it's logged in, and therefore whether the button is there
   // const [data, setData] = useState(null) // for the initial load data?, or do I separate it into the individual sections?
   const [authToken, setAuthToken] = useState(null) // auth token that will be put into localstorage
+  authToken;
   
   // Clear local storage on initial load
   localStorage.removeItem("localAuthToken");
@@ -153,8 +154,8 @@ function App() {
 
 
 
-// useEffect(() => {
-// }, []);
+useEffect(() => {
+}, []);
   
   
   const fetchAuthToken = async (data:string) => {
