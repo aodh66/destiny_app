@@ -220,7 +220,9 @@ function App() {
       }
       
       // try to get initial slot and inventory data
-      if(loginStatus) {
+      // ! You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // console.log(loginStatus)
+      // if(loginStatus === true) {
         try {
           // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
           // fetch Membership type and ID
@@ -276,7 +278,7 @@ function App() {
           } catch (error) {
             console.error("Error fetching inventory data:", error);
           }
-        }
+        // }
           
           
           
