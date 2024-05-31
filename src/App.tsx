@@ -112,10 +112,10 @@ function App() {
   // Clear local storage on initial load
   localStorage.removeItem("localAuthToken");
   
-  const urlParams = new URL(document.location.toString()).searchParams;
   // const authCode = urlParams.get("code");
-  console.log("🚀 ~ authCode:", authCode)
-  const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
+  // console.log("🚀 ~ authCode:", authCode)
+  // const urlParams = new URL(document.location.toString()).searchParams;
+  // const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
   
   // !----------------------------------------------------------------------------------------
   // if(authCode) {
@@ -151,25 +151,27 @@ function App() {
           // // getUserData()
           // }
           // !----------------------------------------------------------------------------------------
-
-
-
-useEffect(() => {
-}, []);
-  
-  
-  const fetchAuthToken = async () => {
-    const authCode = urlParams.get("code");
-    if(authCode) {
-    const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
-    try {
-      const response = await fetch("https://www.bungie.net/Platform/App/OAuth/Token/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "X-API-Key": apiKey,
-        },
-        body: data,
+          
+          
+          
+          
+          
+          useEffect(() => {
+            const fetchAuthToken = async () => {
+              const urlParams = new URL(document.location.toString()).searchParams;
+              const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
+              const authCode = urlParams.get("code");
+              if(authCode) {
+                console.log("🚀 ~ authCode:", authCode)
+                const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
+                try {
+                  const response = await fetch("https://www.bungie.net/Platform/App/OAuth/Token/", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/x-www-form-urlencoded",
+                      "X-API-Key": apiKey,
+                    },
+                    body: data,
       });
       
       const result = await response.json();
@@ -185,11 +187,10 @@ useEffect(() => {
       console.error("Error fetching auth token:", error);
     }
   }
-  };
-  
-    try {
+};
 
-      fetchAuthToken();
+  fetchAuthToken();
+}, []);
 
 
 
