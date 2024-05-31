@@ -103,62 +103,64 @@ useState; //THIS IS FROM PORTFOLIO ON CONDITIONAL RENDERING AND FETCH CALLS
 // !----------------------------------------------------------------------------------------
 
 function App() {
-  const [loginStatus, setloginStatus] = useState(false); // to track if it's logged in, and therefore whether the button is there
+  const [loginStatus, setLoginStatus] = useState(false); // to track if it's logged in, and therefore whether the button is there
   const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
   // const [data, setData] = useState(null) // for the initial load data?, or do I separate it into the individual sections?
   authToken;
 
-  // Clear local storage on initial load
-  // localStorage.removeItem("localAuthToken");
-  localStorage.clear();
-
+  
   useEffect(() => {
     const fetchAuthToken = async () => {
+      // Clear local storage on initial load
+      // localStorage.removeItem("localAuthToken");
+      localStorage.clear();
       const urlParams = new URL(document.location.toString()).searchParams;
       const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
       const authCode = urlParams.get("code");
+      // console.log("🚀 ~ fetchAuthToken ~ authCode:", authCode)
 
       // ! Debug for localhost. Put authtoken into url under debug param
       // !----------------------------------------------------------------------------------------
       if (urlParams.get("debug")) {
-        const token = urlParams.get("debug")
+        const token = {access_token:urlParams.get("debug")}
           // console.log("🚀 ~ token:", token)
           localStorage.setItem(
-            "localToken",
+            "localAuthToken",
             JSON.stringify(token),
           );
           // setAuthToken(token);
-
           // try to get user account data using auth token
           try {
+            // console.log("🚀 ~ token:", token)
             const userDataResponse = await fetch(
               "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/",
               {
                 method: "GET",
                 headers: {
                   "X-API-Key": apiKey,
-                  "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localToken")!)}`,
+                  "Authorization": `Bearer ${token.access_token}`,
                 },
                 body: null,
               },
             );
-
-            setloginStatus(true);
+            
+            setLoginStatus(true);
             const userDataResult = await userDataResponse.json();
-            console.log(
-              "🚀 ~ fetchAuthToken ~ userDataResult:",
-              userDataResult,
-            );
+            // console.log(
+            //   "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
+            //   userDataResult,
+            // );
             document.getElementsByClassName("username")[0].innerHTML =
-              userDataResult.Response.uniqueName;
+            userDataResult.Response.uniqueName;
           } catch (err) {
             console.error("Error fetching user data:", err);
           }
+          // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
         }
       // !----------------------------------------------------------------------------------------
 
       if (authCode) {
-        console.log("🚀 ~ authCode:", authCode);
+        // console.log("🚀 ~ authCode:", authCode);
         const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
         // try to get auth token
         try {
@@ -200,7 +202,7 @@ function App() {
                 },
               );
 
-              setloginStatus(true);
+              setLoginStatus(true);
               const userDataResult = await userDataResponse.json();
               console.log(
                 "🚀 ~ fetchAuthToken ~ userDataResult:",
@@ -217,9 +219,59 @@ function App() {
         }
       }
       
-      // try to get initial slot an inventory data
+      // try to get initial slot and inventory data
       try {
-        // fetch request
+        // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+        // fetch Membership type and ID
+        const userMembershipsResponse = await fetch(
+          "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
+          {
+            method: "GET",
+            headers: {
+              "X-API-Key": apiKey,
+              "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+            },
+            body: null,
+          },
+        );
+
+        const userMembershipsResult = await userMembershipsResponse.json();
+        // console.log(
+        //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
+        //   userMembershipsResult,
+        // );
+        const membershipType = userMembershipsResult.Response.destinyMemberships[0].membershipType
+        const membershipId = userMembershipsResult.Response.destinyMemberships[0].membershipId
+        console.log(
+          "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
+          userMembershipsResult.Response.destinyMemberships[0].membershipType,
+          userMembershipsResult.Response.destinyMemberships[0].membershipId,
+        );
+
+        // fetch character ids
+        try {
+          const userProfileResponse = await fetch(
+            `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
+            {
+              method: "GET",
+              headers: {
+                "X-API-Key": apiKey,
+                "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+              },
+              // body: "profile",
+            },
+          );
+  
+          const userProfileResult = await userProfileResponse.json();
+          console.log("🚀 ~ fetchAuthToken ~ userProfileResult:", userProfileResult)
+          const characterIds = userProfileResult.Response.profile.data.characterIds
+          console.log("🚀 ~ fetchAuthToken ~ characterIds:", characterIds)
+        } catch (error) {
+          console.error("Error fetching inventory data:", error);
+        }
+
+
+
         // the membership Id comes from JSON.parse(localStorage.getItem("localAuthToken")!).membership_id
       } catch (error) {
         console.error("Error fetching inventory data:", error);
