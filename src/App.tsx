@@ -109,16 +109,58 @@ function App() {
   authToken;
 
   // Clear local storage on initial load
-  localStorage.removeItem("localAuthToken");
+  // localStorage.removeItem("localAuthToken");
+  localStorage.clear();
 
   useEffect(() => {
     const fetchAuthToken = async () => {
       const urlParams = new URL(document.location.toString()).searchParams;
       const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
       const authCode = urlParams.get("code");
+
+      // ! Debug for localhost. Put authtoken into url under debug param
+      // !----------------------------------------------------------------------------------------
+      if (urlParams.get("debug")) {
+        const token = urlParams.get("debug")
+          // console.log("🚀 ~ token:", token)
+          localStorage.setItem(
+            "localToken",
+            JSON.stringify(token),
+          );
+          // setAuthToken(token);
+
+          // try to get user account data using auth token
+          try {
+            const userDataResponse = await fetch(
+              "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/",
+              {
+                method: "GET",
+                headers: {
+                  "X-API-Key": apiKey,
+                  "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localToken")!)}`,
+                },
+                body: null,
+              },
+            );
+
+            setloginStatus(true);
+            const userDataResult = await userDataResponse.json();
+            console.log(
+              "🚀 ~ fetchAuthToken ~ userDataResult:",
+              userDataResult,
+            );
+            document.getElementsByClassName("username")[0].innerHTML =
+              userDataResult.Response.uniqueName;
+          } catch (err) {
+            console.error("Error fetching user data:", err);
+          }
+        }
+      // !----------------------------------------------------------------------------------------
+
       if (authCode) {
         console.log("🚀 ~ authCode:", authCode);
         const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
+        // try to get auth token
         try {
           const authTokenResponse = await fetch(
             "https://www.bungie.net/Platform/App/OAuth/Token/",
@@ -144,6 +186,7 @@ function App() {
             );
             setAuthToken(authTokenResult);
 
+            // try to get user account data using auth token
             try {
               const userDataResponse = await fetch(
                 "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/",
@@ -151,7 +194,7 @@ function App() {
                   method: "GET",
                   headers: {
                     "X-API-Key": apiKey,
-                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                    "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
                   },
                   body: null,
                 },
@@ -173,9 +216,27 @@ function App() {
           console.error("Error fetching auth token:", error);
         }
       }
+      
+      // try to get initial slot an inventory data
+      try {
+        // fetch request
+        // the membership Id comes from JSON.parse(localStorage.getItem("localAuthToken")!).membership_id
+      } catch (error) {
+        console.error("Error fetching inventory data:", error);
+      }
+
+
+
+
+
+
+
+
+
+
+
       setTimeout(
         () => {
-          // fetchAuthToken()
           window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
         },
         1000 * 60 * 60,
