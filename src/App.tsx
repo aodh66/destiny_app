@@ -220,77 +220,78 @@ function App() {
       }
       
       // try to get initial slot and inventory data
-      try {
-        // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
-        // fetch Membership type and ID
-        const userMembershipsResponse = await fetch(
-          "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
-          {
-            method: "GET",
-            headers: {
-              "X-API-Key": apiKey,
-              "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-            },
-            body: null,
-          },
-        );
-
-        const userMembershipsResult = await userMembershipsResponse.json();
-        // console.log(
-        //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
-        //   userMembershipsResult,
-        // );
-        const membershipType = userMembershipsResult.Response.destinyMemberships[0].membershipType
-        const membershipId = userMembershipsResult.Response.destinyMemberships[0].membershipId
-        console.log(
-          "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
-          userMembershipsResult.Response.destinyMemberships[0].membershipType,
-          userMembershipsResult.Response.destinyMemberships[0].membershipId,
-        );
-
-        // fetch character ids
+      if(loginStatus) {
         try {
-          const userProfileResponse = await fetch(
-            `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
+          // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+          // fetch Membership type and ID
+          const userMembershipsResponse = await fetch(
+            "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
             {
               method: "GET",
               headers: {
                 "X-API-Key": apiKey,
                 "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
               },
-              // body: "profile",
+              body: null,
             },
           );
-  
-          const userProfileResult = await userProfileResponse.json();
-          console.log("🚀 ~ fetchAuthToken ~ userProfileResult:", userProfileResult)
-          const characterIds = userProfileResult.Response.profile.data.characterIds
-          console.log("🚀 ~ fetchAuthToken ~ characterIds:", characterIds)
-        } catch (error) {
-          console.error("Error fetching inventory data:", error);
+          
+          const userMembershipsResult = await userMembershipsResponse.json();
+          // console.log(
+            //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
+            //   userMembershipsResult,
+            // );
+            const membershipType = userMembershipsResult.Response.destinyMemberships[0].membershipType
+            const membershipId = userMembershipsResult.Response.destinyMemberships[0].membershipId
+            console.log(
+              "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
+              userMembershipsResult.Response.destinyMemberships[0].membershipType,
+              userMembershipsResult.Response.destinyMemberships[0].membershipId,
+            );
+            
+            // fetch character ids
+            try {
+              const userProfileResponse = await fetch(
+                `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
+                {
+                  method: "GET",
+                  headers: {
+                    "X-API-Key": apiKey,
+                    "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                  },
+                },
+              );
+              
+              const userProfileResult = await userProfileResponse.json();
+              console.log("🚀 ~ fetchAuthToken ~ userProfileResult:", userProfileResult)
+              const characterIds = userProfileResult.Response.profile.data.characterIds
+              console.log("🚀 ~ fetchAuthToken ~ characterIds:", characterIds)
+            } catch (error) {
+              console.error("Error fetching inventory data:", error);
+            }
+            
+            
+            
+            // the membership Id comes from JSON.parse(localStorage.getItem("localAuthToken")!).membership_id
+          } catch (error) {
+            console.error("Error fetching inventory data:", error);
+          }
         }
-
-
-
-        // the membership Id comes from JSON.parse(localStorage.getItem("localAuthToken")!).membership_id
-      } catch (error) {
-        console.error("Error fetching inventory data:", error);
-      }
-
-
-
-
-
-
-
-
-
-
-
-      setTimeout(
-        () => {
-          window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
-        },
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          setTimeout(
+            () => {
+              window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
+            },
         1000 * 60 * 60,
       );
     };
