@@ -144,10 +144,10 @@ function App() {
             body: null,
           });
           
-          const userDataResult = await userDataResponse.json();
           setloginStatus(true)
-          console.log("🚀 ~ fetchAuthToken ~ userDataResult:", userDataResult)
-          document.getElementsByClassName("username")[0].innerHTML = userDataResult.Response.uniqueName
+const userDataResult = await userDataResponse.json();
+        console.log("🚀 ~ fetchAuthToken ~ userDataResult:", userDataResult)
+        document.getElementsByClassName("username")[0].innerHTML = userDataResult.Response.uniqueName
         
         } catch (err) {
           console.error("Error fetching user data:", err);
