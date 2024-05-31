@@ -132,9 +132,8 @@ function App() {
       if(!authTokenResult.error) {
         console.log("🚀 ~ fetchAuthToken ~ authTokenResult:", authTokenResult)
         localStorage.setItem("localAuthToken", JSON.stringify(authTokenResult));
-        setloginStatus(true)
         setAuthToken(authTokenResult);
-
+        
         try {
           const userDataResponse = await fetch("https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/", {
             method: "GET",
@@ -143,11 +142,12 @@ function App() {
               "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
             },
             body: null,
-});
-
-const userDataResult = await userDataResponse.json();
-        console.log("🚀 ~ fetchAuthToken ~ userDataResult:", userDataResult)
-        document.getElementsByClassName("username")[0].innerHTML = userDataResult.Response.uniqueName
+          });
+          
+          const userDataResult = await userDataResponse.json();
+          setloginStatus(true)
+          console.log("🚀 ~ fetchAuthToken ~ userDataResult:", userDataResult)
+          document.getElementsByClassName("username")[0].innerHTML = userDataResult.Response.uniqueName
         
         } catch (err) {
           console.error("Error fetching user data:", err);
@@ -160,7 +160,7 @@ const userDataResult = await userDataResponse.json();
   setTimeout(() => {
     // fetchAuthToken()
     window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
-  }, 3600);
+  }, 1000 * 60 * 60);
 };
 
   fetchAuthToken();
