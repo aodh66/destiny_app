@@ -113,7 +113,7 @@ function App() {
   localStorage.removeItem("localAuthToken");
   
   const urlParams = new URL(document.location.toString()).searchParams;
-  const authCode = urlParams.get("code");
+  // const authCode = urlParams.get("code");
   console.log("🚀 ~ authCode:", authCode)
   const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
   
@@ -158,7 +158,10 @@ useEffect(() => {
 }, []);
   
   
-  const fetchAuthToken = async (data:string) => {
+  const fetchAuthToken = async () => {
+    const authCode = urlParams.get("code");
+    if(authCode) {
+    const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
     try {
       const response = await fetch("https://www.bungie.net/Platform/App/OAuth/Token/", {
         method: "POST",
@@ -181,17 +184,13 @@ useEffect(() => {
     } catch (error) {
       console.error("Error fetching auth token:", error);
     }
+  }
   };
   
-  if(authCode) {
     try {
 
-      const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
-      fetchAuthToken(data);
-    } catch(error) {
-      console.log(error)
-    }
-  }
+      fetchAuthToken();
+
 
 
 
