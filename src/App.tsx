@@ -165,7 +165,7 @@ function App() {
                 console.log("🚀 ~ authCode:", authCode)
                 const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
                 try {
-                  const response = await fetch("https://www.bungie.net/Platform/App/OAuth/Token/", {
+                  const authTokenResponse = await fetch("https://www.bungie.net/Platform/App/OAuth/Token/", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/x-www-form-urlencoded",
@@ -174,19 +174,34 @@ function App() {
                     body: data,
       });
       
-      const result = await response.json();
-      if(result) {
-        console.log("🚀 ~ fetchAuthToken ~ result:", result)
-        localStorage.setItem("localAuthToken", JSON.stringify(result));
+      const authTokenResult = await authTokenResponse.json();
+      if(!authTokenResult.error) {
+        console.log("🚀 ~ fetchAuthToken ~ authTokenResult:", authTokenResult)
+        localStorage.setItem("localAuthToken", JSON.stringify(authTokenResult));
         setloginStatus(true)
-      } else {
-        setloginStatus(false)
+        setAuthToken(authTokenResult);
+
+        try {
+          const userDataResponse = await fetch("https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/", {
+            method: "GET",
+            headers: {
+              "X-API-Key": apiKey,
+              "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+            },
+            body: null,
+});
+
+const userDataResult = await userDataResponse.json();
+        console.log("🚀 ~ fetchAuthToken ~ userDataResult:", userDataResult)
+        } catch (err) {
+          console.error("Error fetching user data:", err);
+        }
       }
-      setAuthToken(result);
     } catch (error) {
       console.error("Error fetching auth token:", error);
     }
   }
+
 };
 
   fetchAuthToken();
@@ -195,7 +210,10 @@ function App() {
 
 
 
-
+//   xhr.open("GET", "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/");
+//   xhr.setRequestHeader("X-API-Key", `${import.meta.env.VITE_BUNGIE_API_KEY}`);
+//   xhr.setRequestHeader("Authorization", `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!)}`);
+//   xhr.send(data);
 
 
 
