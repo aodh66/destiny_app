@@ -184,8 +184,13 @@ useEffect(() => {
   };
   
   if(authCode) {
-    const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
-    fetchAuthToken(data);
+    try {
+
+      const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
+      fetchAuthToken(data);
+    } catch(error) {
+      console.log(error)
+    }
   }
 
 
