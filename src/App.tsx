@@ -181,10 +181,10 @@ function App() {
 
           const authTokenResult = await authTokenResponse.json();
           if (!authTokenResult.error) {
-            console.log(
-              "🚀 ~ fetchAuthToken ~ authTokenResult:",
-              authTokenResult,
-            );
+            // console.log(
+            //   "🚀 ~ fetchAuthToken ~ authTokenResult:",
+            //   authTokenResult,
+            // );
             document.getElementsByClassName("accessToken")[0].innerHTML =
             authTokenResult.access_token;
             localStorage.setItem(
@@ -209,10 +209,10 @@ function App() {
 
               setLoginStatus(true);
               const userDataResult = await userDataResponse.json();
-              console.log(
-                "🚀 ~ fetchAuthToken ~ userDataResult:",
-                userDataResult,
-              );
+              // console.log(
+              //   "🚀 ~ fetchAuthToken ~ userDataResult:",
+              //   userDataResult,
+              // );
               document.getElementsByClassName("username")[0].innerHTML =
                 userDataResult.Response.uniqueName;
               document
@@ -246,19 +246,10 @@ function App() {
   // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
   // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
   // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // console.log(loginStatus)
   useEffect(() => {
     const fetchTotalInventory = async () => {
       const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
-      if(loginStatus === true) {
+      if(loginStatus) {
       // console.log("🚀 ~ fetchTotalInventory ~ loginStatus:", loginStatus)
       try {
         // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
