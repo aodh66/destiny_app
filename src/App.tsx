@@ -185,7 +185,7 @@ function App() {
               "🚀 ~ fetchAuthToken ~ authTokenResult:",
               authTokenResult,
             );
-            document.getElementsByClassName("authToken")[0].innerHTML =
+            document.getElementsByClassName("accessToken")[0].innerHTML =
             authTokenResult.Response.access_token;
             localStorage.setItem(
               "localAuthToken",
