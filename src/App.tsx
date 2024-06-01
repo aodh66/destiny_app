@@ -108,7 +108,6 @@ function App() {
   // const [data, setData] = useState(null) // for the initial load data?, or do I separate it into the individual sections?
   authToken;
 
-  
   useEffect(() => {
     const fetchAuthToken = async () => {
       // Clear local storage on initial load
@@ -118,6 +117,7 @@ function App() {
       const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
       const authCode = urlParams.get("code");
       // console.log("🚀 ~ fetchAuthToken ~ authCode:", authCode)
+      
 
       // ! Debug for localhost. Put authtoken into url under debug param
       // !----------------------------------------------------------------------------------------
@@ -146,12 +146,14 @@ function App() {
             
             setLoginStatus(true);
             const userDataResult = await userDataResponse.json();
-            // console.log(
-            //   "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
-            //   userDataResult,
-            // );
+            console.log(
+              "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
+              userDataResult,
+            );
             document.getElementsByClassName("username")[0].innerHTML =
             userDataResult.Response.uniqueName;
+            console.log(`https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
+            document.getElementsByClassName("userIcon")[0].setAttribute( 'src', `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
           } catch (err) {
             console.error("Error fetching user data:", err);
           }
@@ -220,7 +222,18 @@ function App() {
       }
       
       // try to get initial slot and inventory data
-      // ! You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
       // console.log(loginStatus)
       // if(loginStatus === true) {
         try {
@@ -305,14 +318,15 @@ function App() {
     <>
       <div className="header">
         <div className="logoname five">
-          {/* <p className='three'>Di<span className='threel'>VA</span></p> */}
-          {/* <p className='five'>DiVA</p> */}
-          {/* <p className='six'>Di<span className='sixl'>VA</span></p> */}
           DiVA
         </div>
 
         {loginStatus ? (
-          <p className="username">Username Placeholder {loginStatus}</p>
+          <div className="user">
+            <img src="https://" className="userIcon" alt="bungie user icon"/>
+            <div className="username">Username Placeholder</div>
+            </div>
+         
         ) : (
           <a href={import.meta.env.VITE_AUTHORISATION_URL}>
             <button className="loginBtn">Login</button>
