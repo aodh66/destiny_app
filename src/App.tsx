@@ -186,7 +186,7 @@ function App() {
               authTokenResult,
             );
             document.getElementsByClassName("accessToken")[0].innerHTML =
-            authTokenResult.Response.access_token;
+            authTokenResult.access_token;
             localStorage.setItem(
               "localAuthToken",
               JSON.stringify(authTokenResult),
