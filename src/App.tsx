@@ -146,13 +146,13 @@ function App() {
             
             setLoginStatus(true);
             const userDataResult = await userDataResponse.json();
-            console.log(
-              "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
-              userDataResult,
-            );
+            // console.log(
+            //   "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
+            //   userDataResult,
+            // );
             document.getElementsByClassName("username")[0].innerHTML =
             userDataResult.Response.uniqueName;
-            console.log(`https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
+            // console.log(`https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
             document.getElementsByClassName("userIcon")[0].setAttribute( 'src', `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
           } catch (err) {
             console.error("Error fetching user data:", err);
@@ -212,6 +212,7 @@ function App() {
               );
               document.getElementsByClassName("username")[0].innerHTML =
                 userDataResult.Response.uniqueName;
+                document.getElementsByClassName("userIcon")[0].setAttribute( 'src', `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
             } catch (err) {
               console.error("Error fetching user data:", err);
             }
@@ -235,6 +236,9 @@ function App() {
       // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
       // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
       // console.log(loginStatus)
+      useEffect(() => {
+        const fetchTotalInventory = async () => {
+          const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
       // if(loginStatus === true) {
         try {
           // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
@@ -291,8 +295,10 @@ function App() {
           } catch (error) {
             console.error("Error fetching inventory data:", error);
           }
+          fetchTotalInventory()
         // }
-          
+        }
+      }, []);
           
           
           
