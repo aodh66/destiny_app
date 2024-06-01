@@ -117,48 +117,49 @@ function App() {
       const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
       const authCode = urlParams.get("code");
       // console.log("🚀 ~ fetchAuthToken ~ authCode:", authCode)
-      
 
       // ! Debug for localhost. Put authtoken into url under debug param
       // !----------------------------------------------------------------------------------------
       if (urlParams.get("debug")) {
-        const token = {access_token:urlParams.get("debug")}
+        const token = { access_token: urlParams.get("debug") };
+        // console.log("🚀 ~ token:", token)
+        localStorage.setItem("localAuthToken", JSON.stringify(token));
+        // setAuthToken(token);
+        // try to get user account data using auth token
+        try {
           // console.log("🚀 ~ token:", token)
-          localStorage.setItem(
-            "localAuthToken",
-            JSON.stringify(token),
-          );
-          // setAuthToken(token);
-          // try to get user account data using auth token
-          try {
-            // console.log("🚀 ~ token:", token)
-            const userDataResponse = await fetch(
-              "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/",
-              {
-                method: "GET",
-                headers: {
-                  "X-API-Key": apiKey,
-                  "Authorization": `Bearer ${token.access_token}`,
-                },
-                body: null,
+          const userDataResponse = await fetch(
+            "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/",
+            {
+              method: "GET",
+              headers: {
+                "X-API-Key": apiKey,
+                Authorization: `Bearer ${token.access_token}`,
               },
-            );
-            
-            setLoginStatus(true);
-            const userDataResult = await userDataResponse.json();
-            // console.log(
-            //   "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
-            //   userDataResult,
-            // );
-            document.getElementsByClassName("username")[0].innerHTML =
+              body: null,
+            },
+          );
+
+          setLoginStatus(true);
+          const userDataResult = await userDataResponse.json();
+          // console.log(
+          //   "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
+          //   userDataResult,
+          // );
+          document.getElementsByClassName("username")[0].innerHTML =
             userDataResult.Response.uniqueName;
-            // console.log(`https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
-            document.getElementsByClassName("userIcon")[0].setAttribute( 'src', `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
-          } catch (err) {
-            console.error("Error fetching user data:", err);
-          }
-          // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+          // console.log(`https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
+          document
+            .getElementsByClassName("userIcon")[0]
+            .setAttribute(
+              "src",
+              `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`,
+            );
+        } catch (err) {
+          console.error("Error fetching user data:", err);
         }
+        // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+      }
       // !----------------------------------------------------------------------------------------
 
       if (authCode) {
@@ -184,6 +185,8 @@ function App() {
               "🚀 ~ fetchAuthToken ~ authTokenResult:",
               authTokenResult,
             );
+            document.getElementsByClassName("authToken")[0].innerHTML =
+            authTokenResult.Response.access_token;
             localStorage.setItem(
               "localAuthToken",
               JSON.stringify(authTokenResult),
@@ -198,7 +201,7 @@ function App() {
                   method: "GET",
                   headers: {
                     "X-API-Key": apiKey,
-                    "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
                   },
                   body: null,
                 },
@@ -212,7 +215,12 @@ function App() {
               );
               document.getElementsByClassName("username")[0].innerHTML =
                 userDataResult.Response.uniqueName;
-                document.getElementsByClassName("userIcon")[0].setAttribute( 'src', `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
+              document
+                .getElementsByClassName("userIcon")[0]
+                .setAttribute(
+                  "src",
+                  `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`,
+                );
             } catch (err) {
               console.error("Error fetching user data:", err);
             }
@@ -221,98 +229,11 @@ function App() {
           console.error("Error fetching auth token:", error);
         }
       }
-      
-      // try to get initial slot and inventory data
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-      // console.log(loginStatus)
-      useEffect(() => {
-        const fetchTotalInventory = async () => {
-          const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
-      // if(loginStatus === true) {
-        try {
-          // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
-          // fetch Membership type and ID
-          const userMembershipsResponse = await fetch(
-            "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
-            {
-              method: "GET",
-              headers: {
-                "X-API-Key": apiKey,
-                "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-              },
-              body: null,
-            },
-          );
-          
-          const userMembershipsResult = await userMembershipsResponse.json();
-          // console.log(
-            //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
-            //   userMembershipsResult,
-            // );
-            const membershipType = userMembershipsResult.Response.destinyMemberships[0].membershipType
-            const membershipId = userMembershipsResult.Response.destinyMemberships[0].membershipId
-            console.log(
-              "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
-              userMembershipsResult.Response.destinyMemberships[0].membershipType,
-              userMembershipsResult.Response.destinyMemberships[0].membershipId,
-            );
-            
-            // fetch character ids
-            try {
-              const userProfileResponse = await fetch(
-                `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
-                {
-                  method: "GET",
-                  headers: {
-                    "X-API-Key": apiKey,
-                    "Authorization": `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-                  },
-                },
-              );
-              
-              const userProfileResult = await userProfileResponse.json();
-              console.log("🚀 ~ fetchAuthToken ~ userProfileResult:", userProfileResult)
-              const characterIds = userProfileResult.Response.profile.data.characterIds
-              console.log("🚀 ~ fetchAuthToken ~ characterIds:", characterIds)
-            } catch (error) {
-              console.error("Error fetching inventory data:", error);
-            }
-            
-            
-            
-            // the membership Id comes from JSON.parse(localStorage.getItem("localAuthToken")!).membership_id
-          } catch (error) {
-            console.error("Error fetching inventory data:", error);
-          }
-          fetchTotalInventory()
-        // }
-        }
-      }, []);
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          setTimeout(
-            () => {
-              window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
-            },
+
+      setTimeout(
+        () => {
+          window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
+        },
         1000 * 60 * 60,
       );
     };
@@ -320,19 +241,124 @@ function App() {
     fetchAuthToken();
   }, []);
 
+  // try to get initial slot and inventory data
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
+  // console.log(loginStatus)
+  useEffect(() => {
+    const fetchTotalInventory = async () => {
+      const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
+      if(loginStatus === true) {
+      // console.log("🚀 ~ fetchTotalInventory ~ loginStatus:", loginStatus)
+      try {
+        // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+        // fetch Membership type and ID
+        const userMembershipsResponse = await fetch(
+          "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
+          {
+            method: "GET",
+            headers: {
+              "X-API-Key": apiKey,
+              Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+            },
+            body: null,
+          },
+        );
+
+        const userMembershipsResult = await userMembershipsResponse.json();
+        // console.log(
+        //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
+        //   userMembershipsResult,
+        // );
+        const membershipType =
+          userMembershipsResult.Response.destinyMemberships[0].membershipType;
+        const membershipId =
+          userMembershipsResult.Response.destinyMemberships[0].membershipId;
+        // console.log(
+        //   "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
+        //   userMembershipsResult.Response.destinyMemberships[0].membershipType,
+        //   userMembershipsResult.Response.destinyMemberships[0].membershipId,
+        // );
+
+        // fetch character ids
+        try {
+          const userProfileResponse = await fetch(
+            `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
+            {
+              method: "GET",
+              headers: {
+                "X-API-Key": apiKey,
+                Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+              },
+            },
+          );
+
+          const userProfileResult = await userProfileResponse.json();
+          console.log(
+            "🚀 ~ fetchTotalInventory ~ userProfileResult:",
+            userProfileResult,
+          );
+          const characterIds =
+            userProfileResult.Response.profile.data.characterIds;
+          console.log("🚀 ~ fetchTotalInventory ~ characterIds:", characterIds);
+          document.getElementsByClassName("characterIds")[0].innerHTML = `Character IDs: ${characterIds[0]}, ${characterIds[1]}, ${characterIds[2]}`;
+
+          // fetch character inventories
+          try {
+            const characterInventoryResponse = await fetch(
+              `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[0]}/?components=CharacterInventories,CharacterEquipment`,
+              {
+                method: "GET",
+                headers: {
+                  "X-API-Key": apiKey,
+                  Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                },
+              },
+            );
+  
+            const characterInventoryResult = await characterInventoryResponse.json();
+            console.log(
+              "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
+              characterInventoryResult,
+            );
+            const characterInventory =
+            characterInventoryResult.Response;
+            console.log("🚀 ~ fetchTotalInventory ~ characterInventory:", characterInventory)
+          } catch (err) {
+            console.error("Error fetching character inventories:", err);
+          }
+
+        } catch (error) {
+          console.error("Error fetching character IDs:", error);
+        }
+      } catch (error) {
+        console.error("Error fetching membership ID:", error);
+      }
+      }
+    };
+    fetchTotalInventory();
+  }, [loginStatus]);
+
   return (
     <>
       <div className="header">
-        <div className="logoname five">
-          DiVA
-        </div>
+        <div className="logoname five">DiVA</div>
 
         {loginStatus ? (
           <div className="user">
-            <img src="https://" className="userIcon" alt="bungie user icon"/>
+            <img src="https://" className="userIcon" alt="bungie user icon" />
             <div className="username">Username Placeholder</div>
-            </div>
-         
+          </div>
         ) : (
           <a href={import.meta.env.VITE_AUTHORISATION_URL}>
             <button className="loginBtn">Login</button>
@@ -343,6 +369,8 @@ function App() {
       </div>
 
       <div className="content">Character items here. Also inventory below.</div>
+      <p className="accessToken">Access Token (Copy and put into localhost for url param):</p>
+      <p className="characterIds">Character IDs:</p>
       {/* { loginStatus ?
     <p>{loginStatus}</p>: null} */}
     </>
