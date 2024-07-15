@@ -105,8 +105,10 @@ useState; //THIS IS FROM PORTFOLIO ON CONDITIONAL RENDERING AND FETCH CALLS
 function App() {
   const [loginStatus, setLoginStatus] = useState(false); // to track if it's logged in, and therefore whether the button is there
   const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
+  const [manifest, setManifest] = useState(null); // manifest sql database to cross reference with the character inventory
   // const [data, setData] = useState(null) // for the initial load data?, or do I separate it into the individual sections?
   authToken;
+  manifest;
 
   useEffect(() => {
     const fetchAuthToken = async () => {
@@ -118,48 +120,48 @@ function App() {
       const authCode = urlParams.get("code");
       // console.log("🚀 ~ fetchAuthToken ~ authCode:", authCode)
 
-      // ! Debug for localhost. Put authtoken into url under debug param
+      // ! Debug for HTTP localhost. Put access token into url under debug param
       // !----------------------------------------------------------------------------------------
-      if (urlParams.get("debug")) {
-        const token = { access_token: urlParams.get("debug") };
-        // console.log("🚀 ~ token:", token)
-        localStorage.setItem("localAuthToken", JSON.stringify(token));
-        // setAuthToken(token);
-        // try to get user account data using auth token
-        try {
-          // console.log("🚀 ~ token:", token)
-          const userDataResponse = await fetch(
-            "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/",
-            {
-              method: "GET",
-              headers: {
-                "X-API-Key": apiKey,
-                Authorization: `Bearer ${token.access_token}`,
-              },
-              body: null,
-            },
-          );
+      // if (urlParams.get("debug")) {
+      //   const token = { access_token: urlParams.get("debug") };
+      //   console.log("🚀 ~ token:", token)
+      //   localStorage.setItem("localAuthToken", JSON.stringify(token));
+      //   // setAuthToken(token);
+      //   // try to get user account data using auth token
+      //   try {
+      //     // console.log("🚀 ~ token:", token)
+      //     const userDataResponse = await fetch(
+      //       "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/",
+      //       {
+      //         method: "GET",
+      //         headers: {
+      //           "X-API-Key": apiKey,
+      //           Authorization: `Bearer ${token.access_token}`,
+      //         },
+      //         body: null,
+      //       },
+      //     );
 
-          setLoginStatus(true);
-          const userDataResult = await userDataResponse.json();
-          // console.log(
-          //   "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
-          //   userDataResult,
-          // );
-          document.getElementsByClassName("username")[0].innerHTML =
-            userDataResult.Response.uniqueName;
-          // console.log(`https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
-          document
-            .getElementsByClassName("userIcon")[0]
-            .setAttribute(
-              "src",
-              `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`,
-            );
-        } catch (err) {
-          console.error("Error fetching user data:", err);
-        }
-        // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
-      }
+      //     setLoginStatus(true);
+      //     const userDataResult = await userDataResponse.json();
+      //     // console.log(
+      //     //   "🚀 ~ fetchAuthToken ~ DEBUG userDataResult:",
+      //     //   userDataResult,
+      //     // );
+      //     document.getElementsByClassName("username")[0].innerHTML =
+      //       userDataResult.Response.uniqueName;
+      //     // console.log(`https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`)
+      //     document
+      //       .getElementsByClassName("userIcon")[0]
+      //       .setAttribute(
+      //         "src",
+      //         `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`,
+      //       );
+      //   } catch (err) {
+      //     console.error("Error fetching user data:", err);
+      //   }
+      //   // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+      // }
       // !----------------------------------------------------------------------------------------
 
       if (authCode) {
@@ -186,7 +188,7 @@ function App() {
             //   authTokenResult,
             // );
             document.getElementsByClassName("accessToken")[0].innerHTML =
-            authTokenResult.access_token;
+            `Access Token (Copy and put into localhost for url param): ${authTokenResult.access_token}`;
             localStorage.setItem(
               "localAuthToken",
               JSON.stringify(authTokenResult),
@@ -339,6 +341,41 @@ function App() {
     };
     fetchTotalInventory();
   }, [loginStatus]);
+
+  useEffect(() => {
+    const fetchManifest = async () => {
+      // const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
+
+      if(loginStatus) {
+      try {
+        // fetch Manifest
+        const manifestResponse = await fetch(
+          "https://www.bungie.net/Platform/Destiny2/Manifest/",
+          {
+            method: "GET",
+            headers: {
+            },
+            body: null,
+          },
+        );
+
+        const manifestResult = await manifestResponse.json();
+        console.log("🚀 ~ fetchManifest ~ manifestResult:", manifestResult.Response.mobileWorldContentPaths.en)
+        const manifestData = manifestResult.Response.mobileWorldContentPaths.en
+        console.log("🚀 ~ fetchManifest ~ manifestData:", manifestData)
+        // setManifest(manifestResult.Response.mobileWorldContentPaths.en)
+        // console.log("🚀 ~ fetchManifest ~ manifest:", manifest)
+        
+        // TODO Add manifest save to a usestate, to use it with the inventory bits for the future
+        
+      } catch (error) {
+        console.error("Error fetching Manifest", error);
+      }
+      }
+    };
+    fetchManifest();
+  }, [loginStatus]);
+
 
   return (
     <>
