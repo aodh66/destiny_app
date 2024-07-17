@@ -3,7 +3,27 @@ import { useState, useEffect } from "react";
 import "./App.css";
 // import mainStyles from "./main.scss";
 
-useState; //THIS IS FROM PORTFOLIO ON CONDITIONAL RENDERING AND FETCH CALLS
+// import 'sql.js';
+// import initSqlJs from "sql.js";
+// import sqlite3 from 'sqlite3';
+// import { decompressSync } from 'fflate';
+// import * as fflate from 'fflate';
+import {
+  deflate,
+  deflateRaw,
+  inflate,
+  inflateRaw,
+  encode,
+  parse,
+} from 'uzip-module';
+deflate;
+deflateRaw;
+inflate;
+inflateRaw;
+encode;
+parse;
+// useState; //THIS IS FROM PORTFOLIO ON CONDITIONAL RENDERING AND FETCH CALLS
+
 // !----------------------------------------------------------------------------------------
 // !----------------------------------------------------------------------------------------
 // !----------------------------------------------------------------------------------------
@@ -106,6 +126,7 @@ function App() {
   const [loginStatus, setLoginStatus] = useState(false); // to track if it's logged in, and therefore whether the button is there
   const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
   const [manifest, setManifest] = useState(null); // manifest sql database to cross reference with the character inventory
+  // const [db, setDb] = useState<any | null>(null);
   // const [data, setData] = useState(null) // for the initial load data?, or do I separate it into the individual sections?
   authToken;
   manifest;
@@ -167,6 +188,9 @@ function App() {
       if (authCode) {
         // console.log("🚀 ~ authCode:", authCode);
         const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
+        history.pushState (null, 'DiVA | Destiny Vault App', '/');
+        // const url = new URL(window.location.href);
+        // url.searchParams.delete('code');
         // try to get auth token
         try {
           const authTokenResponse = await fetch(
@@ -345,10 +369,10 @@ function App() {
   useEffect(() => {
     const fetchManifest = async () => {
       // const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
-
+      
       if(loginStatus) {
-      try {
-        // fetch Manifest
+        try {
+          // fetch Manifest
         const manifestResponse = await fetch(
           "https://www.bungie.net/Platform/Destiny2/Manifest/",
           {
@@ -360,13 +384,82 @@ function App() {
         );
 
         const manifestResult = await manifestResponse.json();
-        console.log("🚀 ~ fetchManifest ~ manifestResult:", manifestResult.Response.mobileWorldContentPaths.en)
+        // console.log("🚀 ~ fetchManifest ~ manifestResult:", manifestResult)
         const manifestData = manifestResult.Response.mobileWorldContentPaths.en
         console.log("🚀 ~ fetchManifest ~ manifestData:", manifestData)
+        // localStorage.setItem(
+        //   "localManifestData",
+        //   manifestData,
+        // );
+        // console.log('manifest from localstorage', localStorage.getItem("localManifestData"))
+
+
         // setManifest(manifestResult.Response.mobileWorldContentPaths.en)
         // console.log("🚀 ~ fetchManifest ~ manifest:", manifest)
         
+                // const compressed = new Uint8Array(
+                //   await fetch(localStorage.getItem("localManifestData")).then(res => res.arrayBuffer())
+                // );
+                // // Above example with Node.js Buffers:
+                // // Buffer.from('H4sIAAAAAAAAE8tIzcnJBwCGphA2BQAAAA==', 'base64');
+                
+                // const decompressed = fflate.decompressSync(compressed);
+                // // const decompressed = fflate.unzipSync(manifestData);
+                // console.log("🚀 ~ fetchManifest ~ decompressed:", decompressed)
+        
+                // const unzipped = new fflate.Unzip(manifestData);
+                // console.log("🚀 ~ fetchManifest ~ unzipper:", unzipped)
+                
+
+// const compressed = deflate(manifestData);
+
+//                 const unzippedFiles = parse(compressed);
+//                 console.log("🚀 ~ fetchManifest ~ unzippedFiles:", unzippedFiles)
+
+
+
+
+
         // TODO Add manifest save to a usestate, to use it with the inventory bits for the future
+
+        // const sqlPromise = initSqlJs({ 
+        //   // locateFile: file => `https://sql.js.org/dist/${file}`
+        //   locateFile: file => `/node_modules/sql.js/dist/${file}`
+        // });
+        // const dataPromise = fetch(manifestData).then(res => res.arrayBuffer());
+        // const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
+        // const db = new SQL.Database(new Uint8Array(buf));
+        // // db;
+        // console.log("DB:", db)
+
+
+
+        
+        
+        // setDb(new SQL.Database(new Uint8Array(buf)));
+        // console.log(db)
+
+
+
+//         const db = new sqlite3.Database(manifestData);
+
+// db.serialize(() => {
+//     db.run("CREATE TABLE lorem (info TEXT)");
+
+//     const stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+//     for (let i = 0; i < 10; i++) {
+//         stmt.run("Ipsum " + i);
+//     }
+//     stmt.finalize();
+
+//     db.each("SELECT rowid AS id, info FROM lorem", (err, row) => {
+//         console.log(row.id + ": " + row.info);
+//     });
+// });
+
+// db.close();
+
+
         
       } catch (error) {
         console.error("Error fetching Manifest", error);
