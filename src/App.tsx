@@ -4,10 +4,10 @@ import "./App.css";
 // import mainStyles from "./main.scss";
 
 // import 'sql.js';
-// import initSqlJs from "sql.js";
+import initSqlJs from "sql.js";
 // import sqlite3 from 'sqlite3';
 // import { decompressSync } from 'fflate';
-// import * as fflate from 'fflate';
+import * as fflate from 'fflate';
 import {
   deflate,
   deflateRaw,
@@ -189,8 +189,6 @@ function App() {
         // console.log("🚀 ~ authCode:", authCode);
         const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
         history.pushState (null, 'DiVA | Destiny Vault App', '/');
-        // const url = new URL(window.location.href);
-        // url.searchParams.delete('code');
         // try to get auth token
         try {
           const authTokenResponse = await fetch(
@@ -420,19 +418,47 @@ function App() {
 
 
 
+// This is an ArrayBuffer of data
+const massiveFileBuf = await fetch(manifestData).then(
+  res => res.arrayBuffer()
+);
+// To use fflate, you need a Uint8Array
+const massiveFile = new Uint8Array(massiveFileBuf);
+// Note that Node.js Buffers work just fine as well:
+// const massiveFile = require('fs').readFileSync('aMassiveFile.txt');
+
+// Higher level means lower performance but better compression
+// The level ranges from 0 (no compression) to 9 (max compression)
+// The default level is 6
+const notSoMassive = fflate.zlibSync(massiveFile, { level: 9 });
+const massiveAgain = fflate.unzlibSync(notSoMassive);
+// console.log("🚀 ~ fetchManifest ~ massiveAgain:", massiveAgain)
+
+
+
+
+
+
         // TODO Add manifest save to a usestate, to use it with the inventory bits for the future
 
-        // const sqlPromise = initSqlJs({ 
-        //   // locateFile: file => `https://sql.js.org/dist/${file}`
-        //   locateFile: file => `/node_modules/sql.js/dist/${file}`
-        // });
-        // const dataPromise = fetch(manifestData).then(res => res.arrayBuffer());
-        // const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
-        // const db = new SQL.Database(new Uint8Array(buf));
-        // // db;
-        // console.log("DB:", db)
+        const sqlPromise = initSqlJs({ 
+          // locateFile: file => `https://sql.js.org/dist/${file}`
+          locateFile: file => `/node_modules/sql.js/dist/${file}`
+        });
+        const dataPromise = fetch(massiveAgain).then(res => res.arrayBuffer());
+        const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
+        const db = new SQL.Database(new Uint8Array(buf));
+        // db;
+        console.log("DB:", db)
 
+        // ghorn ID: 1363886209
 
+// Prepare an sql statement
+const stmt = db.prepare("SELECT * FROM DestinyInventoryItemDefinition WHERE id=:aval");
+
+// Bind values to the parameters and fetch the results of the query
+const result = stmt.getAsObject({':aval' : 1363886209});
+console.log(result); // Will print {a:1, b:'world'}
 
         
         
