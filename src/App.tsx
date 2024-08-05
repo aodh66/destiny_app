@@ -295,10 +295,10 @@ function App() {
           );
 
           const userProfileResult = await userProfileResponse.json();
-          console.log(
-            "🚀 ~ fetchTotalInventory ~ userProfileResult:",
-            userProfileResult,
-          );
+          // console.log(
+          //   "🚀 ~ fetchTotalInventory ~ userProfileResult:",
+          //   userProfileResult,
+          // );
           const characterIds =
             userProfileResult.Response.profile.data.characterIds;
           console.log("🚀 ~ fetchTotalInventory ~ characterIds:", characterIds);
@@ -356,14 +356,11 @@ function App() {
             {/* Login */}
           </a>
         )}
-        {/* <button className='loginBtn'>Login</button> */}
       </div>
 
       <div className="content">Character items here. Also inventory below.</div>
       <p className="accessToken">Access Token (Copy and put into localhost for url param):</p>
       <p className="characterIds">Character IDs:</p>
-      {/* { loginStatus ?
-    <p>{loginStatus}</p>: null} */}
     </>
   );
 }
