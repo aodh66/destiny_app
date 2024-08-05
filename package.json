@@ -11,15 +11,21 @@
   },
   "dependencies": {
     "@picocss/pico": "^2.0.6",
+    "@types/sql.js": "^1.4.9",
+    "fflate": "^0.8.2",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "sql.js": "^1.10.3",
+    "sqlite3": "^5.1.7",
+    "uzip-module": "^1.0.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
+    "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
     "concurrently": "^8.2.2",
