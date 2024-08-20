@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 // import mainStyles from "./main.scss";
 
-import { Database } from '@sqlitecloud/drivers';
+import { Database } from "@sqlitecloud/drivers";
 
 // const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
 
@@ -174,7 +174,7 @@ function App() {
       if (authCode) {
         // console.log("🚀 ~ authCode:", authCode);
         const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
-        history.pushState (null, 'DiVA | Destiny Vault App', '/');
+        history.pushState(null, "DiVA | Destiny Vault App", "/");
         // try to get auth token
         try {
           const authTokenResponse = await fetch(
@@ -196,7 +196,7 @@ function App() {
             //   authTokenResult,
             // );
             document.getElementsByClassName("accessToken")[0].innerHTML =
-            `Access Token (Copy and put into localhost for url param): ${authTokenResult.access_token}`;
+              `Access Token (Copy and put into localhost for url param): ${authTokenResult.access_token}`;
             localStorage.setItem(
               "localAuthToken",
               JSON.stringify(authTokenResult),
@@ -240,14 +240,15 @@ function App() {
         }
       }
 
-    //  if (loginStatus) {
-       setTimeout(
+      // TODO Issue here is that this check makes loginStatus required, and if I put it in as a dependancy below in the function, then for some reason the app is unable to get the membership id data
+      //  if (loginStatus) {
+      setTimeout(
         () => {
           window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
         },
         1000 * 60 * 60,
-      )
-    // }
+      );
+      // }
     };
 
     fetchAuthToken();
@@ -261,65 +262,42 @@ function App() {
   useEffect(() => {
     const fetchTotalInventory = async () => {
       const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
-      if(loginStatus) {
-      // console.log("🚀 ~ fetchTotalInventory ~ loginStatus:", loginStatus)
-      try {
-        // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
-        // fetch Membership type and ID
-        const userMembershipsResponse = await fetch(
-          "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
-          {
-            method: "GET",
-            headers: {
-              "X-API-Key": apiKey,
-              Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-            },
-            body: null,
-          },
-        );
-
-        const userMembershipsResult = await userMembershipsResponse.json();
-        // console.log(
-        //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
-        //   userMembershipsResult,
-        // );
-        const membershipType =
-          userMembershipsResult.Response.destinyMemberships[0].membershipType;
-        const membershipId =
-          userMembershipsResult.Response.destinyMemberships[0].membershipId;
-        // console.log(
-        //   "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
-        //   userMembershipsResult.Response.destinyMemberships[0].membershipType,
-        //   userMembershipsResult.Response.destinyMemberships[0].membershipId,
-        // );
-
-        // fetch character ids
+      if (loginStatus) {
+        // console.log("🚀 ~ fetchTotalInventory ~ loginStatus:", loginStatus)
         try {
-          const userProfileResponse = await fetch(
-            `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
+          // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+          // fetch Membership type and ID
+          const userMembershipsResponse = await fetch(
+            "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
             {
               method: "GET",
               headers: {
                 "X-API-Key": apiKey,
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
               },
+              body: null,
             },
           );
 
-          const userProfileResult = await userProfileResponse.json();
+          const userMembershipsResult = await userMembershipsResponse.json();
           // console.log(
-          //   "🚀 ~ fetchTotalInventory ~ userProfileResult:",
-          //   userProfileResult,
+          //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
+          //   userMembershipsResult,
           // );
-          const characterIds =
-            userProfileResult.Response.profile.data.characterIds;
-          console.log("🚀 ~ fetchTotalInventory ~ characterIds:", characterIds);
-          document.getElementsByClassName("characterIds")[0].innerHTML = `Character IDs: ${characterIds[0]}, ${characterIds[1]}, ${characterIds[2]}`;
+          const membershipType =
+            userMembershipsResult.Response.destinyMemberships[0].membershipType;
+          const membershipId =
+            userMembershipsResult.Response.destinyMemberships[0].membershipId;
+          // console.log(
+          //   "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
+          //   userMembershipsResult.Response.destinyMemberships[0].membershipType,
+          //   userMembershipsResult.Response.destinyMemberships[0].membershipId,
+          // );
 
-          // fetch character inventories
+          // fetch character ids
           try {
-            const characterInventoryResponse = await fetch(
-              `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[0]}/?components=CharacterInventories,CharacterEquipment`,
+            const userProfileResponse = await fetch(
+              `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
               {
                 method: "GET",
                 headers: {
@@ -328,69 +306,91 @@ function App() {
                 },
               },
             );
-  
-            const characterInventoryResult = await characterInventoryResponse.json();
-            console.log(
-              "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
-              characterInventoryResult,
-            );
-            const characterInventory =
-            characterInventoryResult.Response;
-            console.log("🚀 ~ fetchTotalInventory ~ characterInventory:", characterInventory)
-          } catch (err) {
-            console.error("Error fetching character inventories:", err);
-          }
 
+            const userProfileResult = await userProfileResponse.json();
+            // console.log(
+            //   "🚀 ~ fetchTotalInventory ~ userProfileResult:",
+            //   userProfileResult,
+            // );
+            const characterIds =
+              userProfileResult.Response.profile.data.characterIds;
+            console.log(
+              "🚀 ~ fetchTotalInventory ~ characterIds:",
+              characterIds,
+            );
+            document.getElementsByClassName("characterIds")[0].innerHTML =
+              `Character IDs: ${characterIds[0]}, ${characterIds[1]}, ${characterIds[2]}`;
+
+            // fetch character inventories
+            try {
+              const characterInventoryResponse = await fetch(
+                `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[0]}/?components=CharacterInventories,CharacterEquipment`,
+                {
+                  method: "GET",
+                  headers: {
+                    "X-API-Key": apiKey,
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                  },
+                },
+              );
+
+              const characterInventoryResult =
+                await characterInventoryResponse.json();
+              console.log(
+                "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
+                characterInventoryResult,
+              );
+              const characterInventory = characterInventoryResult.Response;
+              console.log(
+                "🚀 ~ fetchTotalInventory ~ characterInventory:",
+                characterInventory,
+              );
+            } catch (err) {
+              console.error("Error fetching character inventories:", err);
+            }
+          } catch (error) {
+            console.error("Error fetching character IDs:", error);
+          }
         } catch (error) {
-          console.error("Error fetching character IDs:", error);
+          console.error("Error fetching membership ID:", error);
         }
-      } catch (error) {
-        console.error("Error fetching membership ID:", error);
-      }
       }
     };
     fetchTotalInventory();
   }, [loginStatus]);
 
+  // ! Figure out how you want to structure the function to call the DB, and get items out of it
+  // ! likely need to set up the DB accessing object for mapping onto the correct table based
+  // ! on the place it's being called from. Also need to chunk the requests for efficiency.
   useEffect(() => {
     const fetchInventory = async () => {
-      if(loginStatus) {
+      if (loginStatus) {
         try {
+          // Prepare an sql statement
+          const hash = 347366834;
+          const table = "DestinyInventoryItemDefinition";
+          // const stmt2 = db.prepare(`SELECT * FROM ${table} WHERE  id + 4294967296 = ${hash} OR id = ${hash}`);
 
+          const db = new Database(
+            `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
+          );
 
-// Prepare an sql statement
-// const stmt = db.prepare("SELECT * FROM hello WHERE a=:aval AND b=:bval");
-const hash = 347366834
-const table = 'DestinyInventoryItemDefinition'
-// const stmt2 = db.prepare(`SELECT * FROM ${table} WHERE  id + 4294967296 = ${hash} OR id = ${hash}`);
-
-
-
-
-const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
-
-const getInventory = async () => {
-  const result = await db.sql`
+          const getInventory = async () => {
+            const result = await db.sql`
   USE DATABASE Manifest.sqlite; 
   SELECT * FROM ${table} WHERE  id + 4294967296 = ${hash} OR id = ${hash};`;
-  console.log("🚀 ~ getInventory ~ result2:", result)
-  setData(result);
-};
+            console.log("🚀 ~ getInventory ~ result2:", result);
+            setData(result);
+          };
 
-getInventory();
-
-
-
-
-
-      } catch (error) {
-        console.error("Error fetching Inventory", error);
-      }
+          getInventory();
+        } catch (error) {
+          console.error("Error fetching Inventory", error);
+        }
       }
     };
     fetchInventory();
   }, [loginStatus]);
-
 
   return (
     <>
@@ -411,7 +411,9 @@ getInventory();
       </div>
 
       <div className="content">Character items here. Also inventory below.</div>
-      <p className="accessToken">Access Token (Copy and put into localhost for url param):</p>
+      <p className="accessToken">
+        Access Token (Copy and put into localhost for url param):
+      </p>
       <p className="characterIds">Character IDs:</p>
     </>
   );
