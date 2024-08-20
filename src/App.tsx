@@ -3,26 +3,9 @@ import { useState, useEffect } from "react";
 import "./App.css";
 // import mainStyles from "./main.scss";
 
-// import 'sql.js';
-import initSqlJs from "sql.js";
-// import sqlite3 from 'sqlite3';
-// import { decompressSync } from 'fflate';
-import * as fflate from 'fflate';
-import {
-  deflate,
-  deflateRaw,
-  inflate,
-  inflateRaw,
-  encode,
-  parse,
-} from 'uzip-module';
-deflate;
-deflateRaw;
-inflate;
-inflateRaw;
-encode;
-parse;
-// useState; //THIS IS FROM PORTFOLIO ON CONDITIONAL RENDERING AND FETCH CALLS
+import { Database } from '@sqlitecloud/drivers';
+
+// const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
 
 // !----------------------------------------------------------------------------------------
 // !----------------------------------------------------------------------------------------
@@ -124,12 +107,15 @@ parse;
 
 function App() {
   const [loginStatus, setLoginStatus] = useState(false); // to track if it's logged in, and therefore whether the button is there
+  const [data, setData] = useState([]);
   const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
-  const [manifest, setManifest] = useState(null); // manifest sql database to cross reference with the character inventory
+  // Todo if this authtoken state is not used, then get rid of it, it's currently set and never called
+  // const [manifest, setManifest] = useState(null); // manifest sql database to cross reference with the character inventory
   // const [db, setDb] = useState<any | null>(null);
   // const [data, setData] = useState(null) // for the initial load data?, or do I separate it into the individual sections?
   authToken;
-  manifest;
+  data;
+  // manifest;
 
   useEffect(() => {
     const fetchAuthToken = async () => {
@@ -254,12 +240,14 @@ function App() {
         }
       }
 
-      setTimeout(
+    //  if (loginStatus) {
+       setTimeout(
         () => {
           window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
         },
         1000 * 60 * 60,
-      );
+      )
+    // }
     };
 
     fetchAuthToken();
@@ -365,134 +353,42 @@ function App() {
   }, [loginStatus]);
 
   useEffect(() => {
-    const fetchManifest = async () => {
-      // const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
-      
+    const fetchInventory = async () => {
       if(loginStatus) {
         try {
-          // fetch Manifest
-        const manifestResponse = await fetch(
-          "https://www.bungie.net/Platform/Destiny2/Manifest/",
-          {
-            method: "GET",
-            headers: {
-            },
-            body: null,
-          },
-        );
 
-        const manifestResult = await manifestResponse.json();
-        // console.log("🚀 ~ fetchManifest ~ manifestResult:", manifestResult)
-        const manifestData = manifestResult.Response.mobileWorldContentPaths.en
-        console.log("🚀 ~ fetchManifest ~ manifestData:", manifestData)
-        // localStorage.setItem(
-        //   "localManifestData",
-        //   manifestData,
-        // );
-        // console.log('manifest from localstorage', localStorage.getItem("localManifestData"))
-
-
-        // setManifest(manifestResult.Response.mobileWorldContentPaths.en)
-        // console.log("🚀 ~ fetchManifest ~ manifest:", manifest)
-        
-                // const compressed = new Uint8Array(
-                //   await fetch(localStorage.getItem("localManifestData")).then(res => res.arrayBuffer())
-                // );
-                // // Above example with Node.js Buffers:
-                // // Buffer.from('H4sIAAAAAAAAE8tIzcnJBwCGphA2BQAAAA==', 'base64');
-                
-                // const decompressed = fflate.decompressSync(compressed);
-                // // const decompressed = fflate.unzipSync(manifestData);
-                // console.log("🚀 ~ fetchManifest ~ decompressed:", decompressed)
-        
-                // const unzipped = new fflate.Unzip(manifestData);
-                // console.log("🚀 ~ fetchManifest ~ unzipper:", unzipped)
-                
-
-// const compressed = deflate(manifestData);
-
-//                 const unzippedFiles = parse(compressed);
-//                 console.log("🚀 ~ fetchManifest ~ unzippedFiles:", unzippedFiles)
-
-
-
-
-
-// This is an ArrayBuffer of data
-const massiveFileBuf = await fetch(manifestData).then(
-  res => res.arrayBuffer()
-);
-// To use fflate, you need a Uint8Array
-const massiveFile = new Uint8Array(massiveFileBuf);
-// Note that Node.js Buffers work just fine as well:
-// const massiveFile = require('fs').readFileSync('aMassiveFile.txt');
-
-// Higher level means lower performance but better compression
-// The level ranges from 0 (no compression) to 9 (max compression)
-// The default level is 6
-const notSoMassive = fflate.zlibSync(massiveFile, { level: 9 });
-const massiveAgain = fflate.unzlibSync(notSoMassive);
-// console.log("🚀 ~ fetchManifest ~ massiveAgain:", massiveAgain)
-
-
-
-
-
-
-        // TODO Add manifest save to a usestate, to use it with the inventory bits for the future
-
-        const sqlPromise = initSqlJs({ 
-          // locateFile: file => `https://sql.js.org/dist/${file}`
-          locateFile: file => `/node_modules/sql.js/dist/${file}`
-        });
-        const dataPromise = fetch(massiveAgain).then(res => res.arrayBuffer());
-        const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
-        const db = new SQL.Database(new Uint8Array(buf));
-        // db;
-        console.log("DB:", db)
-
-        // ghorn ID: 1363886209
 
 // Prepare an sql statement
-const stmt = db.prepare("SELECT * FROM DestinyInventoryItemDefinition WHERE id=:aval");
-
-// Bind values to the parameters and fetch the results of the query
-const result = stmt.getAsObject({':aval' : 1363886209});
-console.log(result); // Will print {a:1, b:'world'}
-
-        
-        
-        // setDb(new SQL.Database(new Uint8Array(buf)));
-        // console.log(db)
+// const stmt = db.prepare("SELECT * FROM hello WHERE a=:aval AND b=:bval");
+const hash = 347366834
+const table = 'DestinyInventoryItemDefinition'
+// const stmt2 = db.prepare(`SELECT * FROM ${table} WHERE  id + 4294967296 = ${hash} OR id = ${hash}`);
 
 
 
-//         const db = new sqlite3.Database(manifestData);
 
-// db.serialize(() => {
-//     db.run("CREATE TABLE lorem (info TEXT)");
+const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
 
-//     const stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-//     for (let i = 0; i < 10; i++) {
-//         stmt.run("Ipsum " + i);
-//     }
-//     stmt.finalize();
+const getInventory = async () => {
+  const result = await db.sql`
+  USE DATABASE Manifest.sqlite; 
+  SELECT * FROM ${table} WHERE  id + 4294967296 = ${hash} OR id = ${hash};`;
+  console.log("🚀 ~ getInventory ~ result2:", result)
+  setData(result);
+};
 
-//     db.each("SELECT rowid AS id, info FROM lorem", (err, row) => {
-//         console.log(row.id + ": " + row.info);
-//     });
-// });
-
-// db.close();
+getInventory();
 
 
-        
+
+
+
       } catch (error) {
-        console.error("Error fetching Manifest", error);
+        console.error("Error fetching Inventory", error);
       }
       }
     };
-    fetchManifest();
+    fetchInventory();
   }, [loginStatus]);
 
 

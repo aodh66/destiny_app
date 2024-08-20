@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@picocss/pico": "^2.0.6",
+    "@sqlitecloud/drivers": "^1.0.193",
     "@types/sql.js": "^1.4.9",
     "fflate": "^0.8.2",
     "normalize.css": "^8.0.1",
@@ -21,6 +22,7 @@
     "uzip-module": "^1.0.3"
   },
   "devDependencies": {
+    "@types/node": "^22.4.1",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
