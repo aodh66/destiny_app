@@ -107,21 +107,20 @@ import { Database } from "@sqlitecloud/drivers";
 
 function App() {
   const [loginStatus, setLoginStatus] = useState(false); // to track if it's logged in, and therefore whether the button is there
-  const [data, setData] = useState([]);
-  const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
+  // const [data, setData] = useState([]);
   // Todo if this authtoken state is not used, then get rid of it, it's currently set and never called
-  // const [manifest, setManifest] = useState(null); // manifest sql database to cross reference with the character inventory
+  const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
   // const [db, setDb] = useState<any | null>(null);
   // const [data, setData] = useState(null) // for the initial load data?, or do I separate it into the individual sections?
   authToken;
-  data;
-  // manifest;
+  // data;
 
   useEffect(() => {
     const fetchAuthToken = async () => {
       // Clear local storage on initial load
       // localStorage.removeItem("localAuthToken");
-      localStorage.clear();
+      // ! REENABLE THIS, ONLY GONE DUE TO LOCAL TESTING TO STOP ERRORS
+      // localStorage.clear();
       const urlParams = new URL(document.location.toString()).searchParams;
       const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
       const authCode = urlParams.get("code");
@@ -336,10 +335,10 @@ function App() {
 
               const characterInventoryResult =
                 await characterInventoryResponse.json();
-              console.log(
-                "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
-                characterInventoryResult,
-              );
+              // console.log(
+              //   "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
+              //   characterInventoryResult,
+              // );
               const characterInventory = characterInventoryResult.Response;
               console.log(
                 "🚀 ~ fetchTotalInventory ~ characterInventory:",
@@ -367,23 +366,164 @@ function App() {
       if (loginStatus) {
         try {
           // Prepare an sql statement
-          const hash = 347366834;
-          const table = "DestinyInventoryItemDefinition";
+          // const hash = 347366834;
+          // const hash2 = 4184808992;
+          const itemTable = "DestinyInventoryItemDefinition";
+          const bucketTable = "DestinyInventoryBucketDefinition";
+          // type hashArray = [
+          //   {
+          //     itemHash:number,
+          //     bucketHash:number
+          //   }, ...object[]
+          // ]
+          type hashObj = {
+              itemHash:number,
+              bucketHash:number
+            }
+          
+          const charHashArray = [
+            {itemHash:347366834,
+              bucketHash:1498876634
+            },
+            {itemHash:4184808992,
+              bucketHash:2465295065
+            },
+            {itemHash:1399243961,
+              bucketHash:953998645
+            },
+            {itemHash:2255073244,
+              bucketHash:3448274439
+            },
+            // 4184808992,
+            // 1399243961,
+            // 2255073244
+          ]
+          // console.log("🚀 ~ fetchInventory ~ kineticHashObj:", kineticHashObj)
           // const stmt2 = db.prepare(`SELECT * FROM ${table} WHERE  id + 4294967296 = ${hash} OR id = ${hash}`);
+          
+          const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,);
+          
+          // ! Test Request
+          // const testHash = 3183180185;
+          // const testHash = 358788212;
+          // const testHash = 2255073244;
+          const testHash = 1498876634;
+          // const testTable = "DestinyInventoryItemDefinition";
+          // ! The bucket or category of items (like kinetic weapon) is listed in the inventory 
+          // ! entry with its hash code initially under bucketHash, you then need to call 
+          // ! another sql request on the DestinyInventoryBucketDefinition table to give you the name 
+          // ! of the bucket.
+          const testTable = "DestinyInventoryBucketDefinition";
+          const testResult = await db.sql`
+  USE DATABASE Manifest.sqlite;
+  SELECT * FROM ${testTable} WHERE id + 4294967296 = ${testHash} OR id = ${testHash};`;
+          console.log("🚀 ~ fetchInventory ~ testResult:", testResult)
+          const testResultJson = JSON.parse(testResult[0].json)
+          console.log("🚀 ~ fetchInventory ~ testResultJson:", testResultJson)
 
-          const db = new Database(
-            `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
-          );
+          // ! Temporary individual call function to get it running before server hosting is patched
+          // ! Feed in the data object, then after each query, modify the object and setdata again
+const getInventoryData = async (manifestItemTable : string, manifestBucketTable : string, hashArray : Array<hashObj>) => {
+  for (const id of hashArray) {
+    
+    // Get item info
+      const result = await db.sql`
+  USE DATABASE Manifest.sqlite;
+  SELECT * FROM ${manifestItemTable} WHERE id + 4294967296 = ${id.itemHash} OR id = ${id.itemHash};`;
+      // console.log("🚀 ~ hashArray.forEach ~ result:", result)
+      // ! See if you can index directly into the JSON so you can directly make an object and save it to data
+      const resultJson = JSON.parse(result[0].json)
+      // console.log("🚀 ~ getInventoryData ~ resultJson:", resultJson)
+      
+      // Get bucket name
+      const bucketResult = await db.sql`
+  USE DATABASE Manifest.sqlite;
+  SELECT * FROM ${manifestBucketTable} WHERE id + 4294967296 = ${id.bucketHash} OR id = ${id.bucketHash};`;
+      // console.log("🚀 ~ getInventoryData ~ bucketResult:", bucketResult)
+      const bucketResultJson = JSON.parse(bucketResult[0].json)
+      // console.log("🚀 ~ getInventoryData ~ bucketResultJson:", bucketResultJson)
 
-          const getInventory = async () => {
-            const result = await db.sql`
-  USE DATABASE Manifest.sqlite; 
-  SELECT * FROM ${table} WHERE  id + 4294967296 = ${hash} OR id = ${hash};`;
-            console.log("🚀 ~ getInventory ~ result2:", result);
-            setData(result);
-          };
+      const itemObj = {
+        hash: id.itemHash,
+        bucketHash: id.bucketHash,
+        tableId: result[0].id,
+        name: resultJson.displayProperties.name,
+        icon: resultJson.displayProperties.icon,
+        flavorText: resultJson.flavorText,
+        rarity: resultJson.inventory.tierTypeName,
+        itemType: resultJson.itemTypeDisplayName,
+        bucket: bucketResultJson.displayProperties.name,
+      }
+      console.log("🚀 ~ getInventoryData ~ itemObj:", itemObj)
+      // return itemObj
+      // ! Modify the data object with setData
+      
+    }
+}
+getInventoryData(itemTable, bucketTable, charHashArray)
 
-          getInventory();
+// ! Previous attempt to get SQL query chunking up and running
+//           const getInventory = async () => {
+
+// function queryString(manifestTable : string, hashArray : Array<number>) {
+//   let query = `USE DATABASE Manifest.sqlite;`
+//   // let query = ``
+  
+//   // console.log(hashArray.length)
+//   hashArray.forEach((hash : number) => {
+//   // console.log("🚀 ~ hashArray.forEach ~ hash:", hash)
+
+//     query = query.concat(' ', `SELECT * FROM ${manifestTable} WHERE id + 4294967296 = ${hash} OR id = ${hash};
+//   UNION;`)
+//   })
+//   // console.log("🚀 ~ queryString ~ query:", query)
+//   query = query.slice(0,-8).concat('', ';')
+//   // query = query.slice(0,-6)
+//   // console.log("🚀 ~ queryString ~ querySLICE:", query)
+//   // query = query.
+//   return query;
+// }
+
+// const dbQuery = queryString(table, kineticHashObj).trim();
+// // console.log("🚀 ~ getInventory ~ dbQuery:", dbQuery)
+// // console.log("🚀 ~ getInventory ~ dbQuery:", dbQuery.slice(30))
+
+
+// // const testQuery = `SELECT * FROM ${table} WHERE id + 4294967296 = ${hash} OR id = ${hash}
+// //   UNION
+// //   SELECT * FROM ${table} WHERE id + 4294967296 = ${hash2} OR id = ${hash2}`
+// // console.log("🚀 ~ getInventory ~ testQuery:", testQuery)
+
+
+            
+//   //           const result = await db.sql`
+//   // USE DATABASE Manifest.sqlite; 
+//   // SELECT * FROM ${table} WHERE id + 4294967296 = ${hash} OR id = ${hash}
+//   // UNION
+//   // SELECT * FROM ${table} WHERE id + 4294967296 = ${hash2} OR id = ${hash2}
+//   // ORDER BY id;`;
+//   // // // const result = await db.sql`
+//   // // // USE DATABASE Manifest.sqlite;
+//   // // // SELECT * FROM ${table} WHERE id + 4294967296 = ${hash} OR id = ${hash};`;
+//   // console.log("🚀 ~ getInventory ~ result:", result);
+//   // try {
+//   // const result2 = await db.sql`${dbQuery}`;
+//   //           console.log("🚀 ~ getInventory ~ result2:", result2)
+//   // } catch (error) {
+//     //   console.log('Error executing query:', error)
+//     //   throw error
+//     // }
+    
+//     // const result3 = await db.sql`
+//     // USE DATABASE Manifest.sqlite; ${testQuery} ORDER BY id;`;
+//     //           console.log("🚀 ~ getInventory ~ result2:", result3)
+            
+            
+
+//             // setData(result);
+//           };
+
+          // getInventory();
         } catch (error) {
           console.error("Error fetching Inventory", error);
         }

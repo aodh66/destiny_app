@@ -13,6 +13,7 @@
     "@picocss/pico": "^2.0.6",
     "@sqlitecloud/drivers": "^1.0.193",
     "@types/sql.js": "^1.4.9",
+    "express": "^4.19.2",
     "fflate": "^0.8.2",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
