@@ -139,39 +139,39 @@ function App() {
     DestinyScriptedSkullDefinition: "skullHash",
     DestinyGrimoireCardDefinition: "cardId",
   };
-  
+
   type itemObjType = {
-    hash: number,
-    bucketHash: number,
-    tableId: string,
-    name: string,
-    icon: string,
-    flavorText: string,
-    rarity: string,
-    itemType: string,
-    bucket: string,
-    equipped: boolean,
+    hash: number;
+    bucketHash: number;
+    tableId: string;
+    name: string;
+    icon: string;
+    flavorText: string;
+    rarity: string;
+    itemType: string;
+    bucket: string;
+    equipped: boolean;
   };
-type itemArrayType = itemObjType[];
-type characterObjType = {
-  kineticWeapons: itemArrayType;
-        energyWeapons: itemArrayType;
-        heavyWeapons: itemArrayType;
-        helmet: itemArrayType;
-        arms: itemArrayType;
-        chest: itemArrayType;
-        legs: itemArrayType;
-        classItem: itemArrayType;
-        ghost: itemArrayType;
-        // banner: itemArrayType;
-        emblem: itemArrayType;
-        ship: itemArrayType;
-        sparrow: itemArrayType;
-        // emotes: itemArrayType;
-        inventory: itemArrayType;
-        subclass: itemArrayType;
-};
-// type itemArrayType = [itemObjType];
+  type itemArrayType = itemObjType[];
+  type characterObjType = {
+    kineticWeapons: itemArrayType;
+    energyWeapons: itemArrayType;
+    heavyWeapons: itemArrayType;
+    helmet: itemArrayType;
+    arms: itemArrayType;
+    chest: itemArrayType;
+    legs: itemArrayType;
+    classItem: itemArrayType;
+    ghost: itemArrayType;
+    // banner: itemArrayType;
+    emblem: itemArrayType;
+    ship: itemArrayType;
+    sparrow: itemArrayType;
+    // emotes: itemArrayType;
+    inventory: itemArrayType;
+    subclass: itemArrayType;
+  };
+  // type itemArrayType = [itemObjType];
   type dataStateType = {
     [propName: string]: {
       raceType: string;
@@ -279,518 +279,213 @@ type characterObjType = {
                   "src",
                   `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`,
                 );
-                
 
-
-
-
-
-
-                if (userDataResult) {
-          // console.log("🚀 ~ fetchTotalInventory ~ loginState:", loginState)
-          try {
-            // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
-            // fetch Membership type and ID
-            const userMembershipsResponse = await fetch(
-              "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
-              {
-                method: "GET",
-                headers: {
-                  "X-API-Key": apiKey,
-                  Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-                },
-                body: null,
-              },
-            );
-  
-            const userMembershipsResult = await userMembershipsResponse.json();
-            // console.log(
-            //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
-            //   userMembershipsResult,
-            // );
-            const membershipType =
-            userMembershipsResult.Response.destinyMemberships[0].membershipType;
-            const membershipId =
-            userMembershipsResult.Response.destinyMemberships[0].membershipId;
-            // console.log(
-            //   "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
-            //   userMembershipsResult.Response.destinyMemberships[0].membershipType,
-            //   userMembershipsResult.Response.destinyMemberships[0].membershipId,
-            // );
-            
-            // fetch character ids
-            try {
-              const userProfileResponse = await fetch(
-                `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
-                {
-                  method: "GET",
-                  headers: {
-                    "X-API-Key": apiKey,
-                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-                  },
-                },
-              );
-  
-              const userProfileResult = await userProfileResponse.json();
-              // console.log(
-                //   "🚀 ~ fetchTotalInventory ~ userProfileResult:",
-                //   userProfileResult,
-                // );
-                const characterIds =
-                userProfileResult.Response.profile.data.characterIds;
-                console.log(
-                "🚀 ~ fetchTotalInventory ~ characterIds:",
-                characterIds,
-              );
-              document.getElementsByClassName("characterIds")[0].innerHTML =
-                `Character IDs: ${characterIds[0]}, ${characterIds[1]}, ${characterIds[2]}`;
-  
-              const userProfileResponse2 = await fetch(
-                `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Characters`,
-                {
-                  method: "GET",
-                  headers: {
-                    "X-API-Key": apiKey,
-                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-                  },
-                },
-              );
-  
-              const userProfileResult2 = await userProfileResponse2.json();
-              console.log(
-                "🚀 ~ fetchTotalInventory ~ userProfileResult2:",
-                userProfileResult2,
-              );
-              // console.log("drill", userProfileResult2.Response.characters.data[characterIds[0]])
-              
-              // const dataState = {
-                // const testItemObj : itemObjType = {
-                //   hash: 1,
-                //   bucketHash: 2,
-                //   tableId: "testID",
-                //   name: "testName",
-                //   icon: "testIcon",
-                //   flavorText: "testFlavourText",
-                //   rarity: "testRarity",
-                //   itemType: "testType",
-                //   bucket: "testBucket",
-                //   equipped: false,
-                // };
-              const dataState : dataStateType = {
-                [`${characterIds[0]}`]: {
-                  raceType: `${userProfileResult2.Response.characters.data[characterIds[0]].raceType}`,
-                  raceHash: `${userProfileResult2.Response.characters.data[characterIds[0]].raceHash}`,
-                  classType: `${userProfileResult2.Response.characters.data[characterIds[0]].classType}`,
-                  classHash: `${userProfileResult2.Response.characters.data[characterIds[0]].classHash}`,
-                  race: "",
-                  class: "",
-                  emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[0]].emblemBackgroundPath}`,
-                  characterObj: {
-                    kineticWeapons: [] as itemArrayType,
-                    energyWeapons: [] as itemArrayType,
-                    heavyWeapons: [] as itemArrayType,
-                    helmet: [] as itemArrayType,
-                    arms: [] as itemArrayType,
-                    chest: [] as itemArrayType,
-                    legs: [] as itemArrayType,
-                    classItem: [] as itemArrayType,
-                    ghost: [] as itemArrayType,
-                    // banner: [] as itemArrayType,
-                    emblem: [] as itemArrayType,
-                    ship: [] as itemArrayType,
-                    sparrow: [] as itemArrayType,
-                    // emotes: [] as itemArrayType,
-                    inventory: [] as itemArrayType,
-                    subclass: [] as itemArrayType,
-                  },
-                },
-                [`${characterIds[1]}`]: {
-                  raceType: `${userProfileResult2.Response.characters.data[characterIds[1]].raceType}`,
-                  raceHash: `${userProfileResult2.Response.characters.data[characterIds[1]].raceHash}`,
-                  classType: `${userProfileResult2.Response.characters.data[characterIds[1]].classType}`,
-                  classHash: `${userProfileResult2.Response.characters.data[characterIds[1]].classHash}`,
-                  race: "",
-                  class: "",
-                  emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[1]].emblemBackgroundPath}`,
-                  characterObj: {
-                    kineticWeapons: [] as itemArrayType,
-                    energyWeapons: [] as itemArrayType,
-                    heavyWeapons: [] as itemArrayType,
-                    helmet: [] as itemArrayType,
-                    arms: [] as itemArrayType,
-                    chest: [] as itemArrayType,
-                    legs: [] as itemArrayType,
-                    classItem: [] as itemArrayType,
-                    ghost: [] as itemArrayType,
-                    // banner: [] as itemArrayType,
-                    emblem: [] as itemArrayType,
-                    ship: [] as itemArrayType,
-                    sparrow: [] as itemArrayType,
-                    // emotes: [] as itemArrayType,
-                    inventory: [] as itemArrayType,
-                    subclass: [] as itemArrayType,
-                  },
-                },
-                [`${characterIds[2]}`]: {
-                  raceType: `${userProfileResult2.Response.characters.data[characterIds[2]].raceType}`,
-                  raceHash: `${userProfileResult2.Response.characters.data[characterIds[2]].raceHash}`,
-                  classType: `${userProfileResult2.Response.characters.data[characterIds[2]].classType}`,
-                  classHash: `${userProfileResult2.Response.characters.data[characterIds[2]].classHash}`,
-                  race: "",
-                  class: "",
-                  emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[2]].emblemBackgroundPath}`,
-                  characterObj: {
-                    kineticWeapons: [] as itemArrayType,
-                    energyWeapons: [] as itemArrayType,
-                    heavyWeapons: [] as itemArrayType,
-                    helmet: [] as itemArrayType,
-                    arms: [] as itemArrayType,
-                    chest: [] as itemArrayType,
-                    legs: [] as itemArrayType,
-                    classItem: [] as itemArrayType,
-                    ghost: [] as itemArrayType,
-                    // banner: [] as itemArrayType,
-                    emblem: [] as itemArrayType,
-                    ship: [] as itemArrayType,
-                    sparrow: [] as itemArrayType,
-                    // emotes: [] as itemArrayType,
-                    inventory: [] as itemArrayType,
-                    subclass: [] as itemArrayType,
-                  },
-                },
-              };
-              console.log("🚀 ~ fetchAuthToken ~ dataState:", dataState)
-              // type charNumState = {
-              //   raceType: string,
-              //     raceHash: string,
-              //     classType: string,
-              //     classHash: string,
-              //     race: string,
-              //     class: string,
-              //     id: number,
-              //     emblemBackgroundPath: string,
-              //     characterObj: {
-              //       kineticWeapons: [],
-              //       energyWeapons: [],
-              //       heavyWeapons: [],
-              //       helmet: [],
-              //       arms: [],
-              //       chest: [],
-              //       legs: [],
-              //       classItem: [],
-              //       ghost: [],
-              //       // banner: [],
-              //       emblem: [],
-              //       ship: [],
-              //       sparrow: [],
-              //       // emotes: [],
-              //       inventory: [],
-              //       subclass: [],
-              //     },
-              //     charObj: object,
-              // }
-              // const char1State : charNumState = {
-              //     raceType: `${userProfileResult2.Response.characters.data[characterIds[0]].raceType}`,
-              //     raceHash: `${userProfileResult2.Response.characters.data[characterIds[0]].raceHash}`,
-              //     classType: `${userProfileResult2.Response.characters.data[characterIds[0]].classType}`,
-              //     classHash: `${userProfileResult2.Response.characters.data[characterIds[0]].classHash}`,
-              //     race: "",
-              //     class: "",
-              //     id: characterIds[0],
-              //     emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[0]].emblemBackgroundPath}`,
-              //     characterObj: {
-              //       kineticWeapons: [],
-              //       energyWeapons: [],
-              //       heavyWeapons: [],
-              //       helmet: [],
-              //       arms: [],
-              //       chest: [],
-              //       legs: [],
-              //       classItem: [],
-              //       ghost: [],
-              //       // banner: [],
-              //       emblem: [],
-              //       ship: [],
-              //       sparrow: [],
-              //       // emotes: [],
-              //       inventory: [],
-              //       subclass: [],
-              //     },
-              //     charObj: {},
-              //   }
-              //   console.log("🚀 ~ fetchAuthToken ~ char1State:", char1State)
-              //   setChar1(char1State)
-              //   console.log("🚀 ~ fetchAuthToken ~ char1:", char1)
-                
-              for (const [key] of Object.entries(dataState)) {
-                // console.log(`key: ${key}, value: ${value}`);
-                if (
-                  userProfileResult2.Response.characters.data[key].raceType === 0
-                ) {
-                  dataState[key].race = "Human";
-                } else if (
-                  userProfileResult2.Response.characters.data[key].raceType === 1
-                ) {
-                  dataState[key].race = "Awoken";
-                } else if (
-                  userProfileResult2.Response.characters.data[key].raceType === 2
-                ) {
-                  dataState[key].race = "Exo";
-                }
-                if (
-                  userProfileResult2.Response.characters.data[key].classType === 0
-                ) {
-                  dataState[key].class = "Titan";
-                } else if (
-                  userProfileResult2.Response.characters.data[key].classType === 1
-                ) {
-                  dataState[key].class = "Hunter";
-                } else if (
-                  userProfileResult2.Response.characters.data[key].classType === 2
-                ) {
-                  dataState[key].class = "Warlock";
-                }
-              }
-  
-              setData(dataState);
-              // console.log("dataobj", data)
-  
-              //         const db = new Database(
-              //           `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
-              //         );
-              //         const getCharacterRaceClass = async (
-                //           raceHash: number,
-              //           classHash: number,
-              //         ) => {
-  
-              //             // Get item info
-              //             const raceResult = await db.sql`
-              // USE DATABASE Manifest.sqlite;
-              // SELECT * FROM DestinyRaceDefinition WHERE id + 4294967296 = ${raceHash} OR id = ${raceHash};`;
-              //             console.log("🚀 ~ hashArray.forEach ~ result:", raceResult)
-              //             // ! See if you can index directly into the JSON so you can directly make an object and save it to data
-              //             // const raceResultJson = JSON.parse(raceResult[0].json);
-              //             // console.log("🚀 ~ raceResultJson:", raceResultJson)
-  
-              //             // Get bucket name
-              //             const classResult = await db.sql`
-              // USE DATABASE Manifest.sqlite;
-              // SELECT * FROM DestinyClassDefinition WHERE id + 4294967296 = ${classHash} OR id = ${classHash};`;
-              //             // console.log("🚀 ~ getInventoryData ~ bucketResult:", bucketResult)
-              //             const classResultJson = JSON.parse(classResult[0].json);
-              //             console.log(
-              //               "🚀 ~ classResultJson:",
-              //               classResultJson,
-              //             );
-              
-              //         };
-              //         const dataState2 : object = data;
-              //         console.log("🚀 ~ fetchTotalInventory ~ dataState2:", dataState2)
-              //         console.log("🚀 ~ fetchTotalInventory ~ dataState2:", dataState2[characterIds[0] as keyof object].raceHash)
-              //         // characterIds[0]
-              //         getCharacterRaceClass(dataState2[characterIds[0] as keyof object].raceHash, dataState2[characterIds[0] as keyof object].classHash);
-              
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-              // fetch character inventories
-              // First character
-              try {
-                const characterInventoryResponse = await fetch(
-                  `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[0]}/?components=CharacterInventories,CharacterEquipment`,
-                  {
-                    method: "GET",
-                    headers: {
-                      "X-API-Key": apiKey,
-                      Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+              if (userDataResult) {
+                // console.log("🚀 ~ fetchTotalInventory ~ loginState:", loginState)
+                try {
+                  // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+                  // fetch Membership type and ID
+                  const userMembershipsResponse = await fetch(
+                    "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
+                    {
+                      method: "GET",
+                      headers: {
+                        "X-API-Key": apiKey,
+                        Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                      },
+                      body: null,
                     },
-                  },
-                );
-  
-                const characterInventoryResult =
-                await characterInventoryResponse.json();
-                // console.log(
-                  //   "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
-                  //   characterInventoryResult,
-                  // );
-                  const characterInventory = characterInventoryResult.Response;
-                  console.log(
-                    "🚀 ~ fetchTotalInventory ~ characterInventory:",
-                  characterInventory,
-                );
-                // console.log("test", characterInventory.equipment.data.items)
-  
-                type hashArr = [
-                  {
-                    itemHash: number;
-                    bucketHash: number;
-                  },
-                ];
-  
-                // const getCharacterInventoryData = async (dataObj: dataStateType, hashArray: hashArr, equipBool : boolean) => {
-                  const db = new Database(
-                    `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
                   );
-                  // hashArray.forEach((id) => {
-  
-                  // })
-                  // const dataObj = data as dataStateType;
-                  console.log("🚀 ~ fetchTotalInventory ~ dataObject:", dataState);
-                  const hashArray : hashArr = characterInventory.equipment.data.items;
-                  const equipBool = true;
-                  for (const id of hashArray) {
-                    // Get item info
-                    const result = await db.sql`
-      USE DATABASE Manifest.sqlite;
-      SELECT * FROM DestinyInventoryItemDefinition WHERE id + 4294967296 = ${id.itemHash} OR id = ${id.itemHash};`;
-      // console.log("🚀 ~ hashArray.forEach ~ result:", result)
-      const resultJson = JSON.parse(result[0].json);
-      // console.log("🚀 ~ getInventoryData ~ resultJson:", resultJson)
-      
-      // Get bucket name
-      const bucketResult = await db.sql`
-      USE DATABASE Manifest.sqlite;
-      SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.bucketHash} OR id = ${id.bucketHash};`;
-      // console.log("🚀 ~ getInventoryData ~ bucketResult:", bucketResult)
-      const bucketResultJson = JSON.parse(bucketResult[0].json);
-      // console.log(
-        //   "🚀 ~ getInventoryData ~ bucketResultJson:",
-        //   bucketResultJson,
-        // );
-        
-        const itemObj : itemObjType = {
-                      hash: id.itemHash,
-                      bucketHash: id.bucketHash,
-                      tableId: result[0].id,
-                      name: resultJson.displayProperties.name,
-                      icon: resultJson.displayProperties.icon,
-                      flavorText: resultJson.flavorText,
-                      rarity: resultJson.inventory.tierTypeName,
-                      itemType: resultJson.itemTypeDisplayName,
-                      bucket: bucketResultJson.displayProperties.name,
-                      equipped: equipBool,
+
+                  const userMembershipsResult =
+                    await userMembershipsResponse.json();
+                  // console.log(
+                  //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
+                  //   userMembershipsResult,
+                  // );
+                  const membershipType =
+                    userMembershipsResult.Response.destinyMemberships[0]
+                      .membershipType;
+                  const membershipId =
+                    userMembershipsResult.Response.destinyMemberships[0]
+                      .membershipId;
+                  // console.log(
+                  //   "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
+                  //   userMembershipsResult.Response.destinyMemberships[0].membershipType,
+                  //   userMembershipsResult.Response.destinyMemberships[0].membershipId,
+                  // );
+
+                  // fetch character ids
+                  try {
+                    const userProfileResponse = await fetch(
+                      `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
+                      {
+                        method: "GET",
+                        headers: {
+                          "X-API-Key": apiKey,
+                          Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                        },
+                      },
+                    );
+
+                    const userProfileResult = await userProfileResponse.json();
+                    // console.log(
+                    //   "🚀 ~ fetchTotalInventory ~ userProfileResult:",
+                    //   userProfileResult,
+                    // );
+                    const characterIds =
+                      userProfileResult.Response.profile.data.characterIds;
+                    console.log(
+                      "🚀 ~ fetchTotalInventory ~ characterIds:",
+                      characterIds,
+                    );
+                    document.getElementsByClassName(
+                      "characterIds",
+                    )[0].innerHTML =
+                      `Character IDs: ${characterIds[0]}, ${characterIds[1]}, ${characterIds[2]}`;
+
+                    const userProfileResponse2 = await fetch(
+                      `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Characters`,
+                      {
+                        method: "GET",
+                        headers: {
+                          "X-API-Key": apiKey,
+                          Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                        },
+                      },
+                    );
+
+                    const userProfileResult2 =
+                      await userProfileResponse2.json();
+                    // console.log(
+                    //   "🚀 ~ fetchTotalInventory ~ userProfileResult2:",
+                    //   userProfileResult2,
+                    // );
+                    // console.log("drill", userProfileResult2.Response.characters.data[characterIds[0]])
+
+                    let dataState: dataStateType = {
+                      [`${characterIds[0]}`]: {
+                        raceType: `${userProfileResult2.Response.characters.data[characterIds[0]].raceType}`,
+                        raceHash: `${userProfileResult2.Response.characters.data[characterIds[0]].raceHash}`,
+                        classType: `${userProfileResult2.Response.characters.data[characterIds[0]].classType}`,
+                        classHash: `${userProfileResult2.Response.characters.data[characterIds[0]].classHash}`,
+                        race: "",
+                        class: "",
+                        emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[0]].emblemBackgroundPath}`,
+                        characterObj: {
+                          kineticWeapons: [] as itemArrayType,
+                          energyWeapons: [] as itemArrayType,
+                          heavyWeapons: [] as itemArrayType,
+                          helmet: [] as itemArrayType,
+                          arms: [] as itemArrayType,
+                          chest: [] as itemArrayType,
+                          legs: [] as itemArrayType,
+                          classItem: [] as itemArrayType,
+                          ghost: [] as itemArrayType,
+                          // banner: [] as itemArrayType,
+                          emblem: [] as itemArrayType,
+                          ship: [] as itemArrayType,
+                          sparrow: [] as itemArrayType,
+                          // emotes: [] as itemArrayType,
+                          inventory: [] as itemArrayType,
+                          subclass: [] as itemArrayType,
+                        },
+                      },
+                      [`${characterIds[1]}`]: {
+                        raceType: `${userProfileResult2.Response.characters.data[characterIds[1]].raceType}`,
+                        raceHash: `${userProfileResult2.Response.characters.data[characterIds[1]].raceHash}`,
+                        classType: `${userProfileResult2.Response.characters.data[characterIds[1]].classType}`,
+                        classHash: `${userProfileResult2.Response.characters.data[characterIds[1]].classHash}`,
+                        race: "",
+                        class: "",
+                        emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[1]].emblemBackgroundPath}`,
+                        characterObj: {
+                          kineticWeapons: [] as itemArrayType,
+                          energyWeapons: [] as itemArrayType,
+                          heavyWeapons: [] as itemArrayType,
+                          helmet: [] as itemArrayType,
+                          arms: [] as itemArrayType,
+                          chest: [] as itemArrayType,
+                          legs: [] as itemArrayType,
+                          classItem: [] as itemArrayType,
+                          ghost: [] as itemArrayType,
+                          // banner: [] as itemArrayType,
+                          emblem: [] as itemArrayType,
+                          ship: [] as itemArrayType,
+                          sparrow: [] as itemArrayType,
+                          // emotes: [] as itemArrayType,
+                          inventory: [] as itemArrayType,
+                          subclass: [] as itemArrayType,
+                        },
+                      },
+                      [`${characterIds[2]}`]: {
+                        raceType: `${userProfileResult2.Response.characters.data[characterIds[2]].raceType}`,
+                        raceHash: `${userProfileResult2.Response.characters.data[characterIds[2]].raceHash}`,
+                        classType: `${userProfileResult2.Response.characters.data[characterIds[2]].classType}`,
+                        classHash: `${userProfileResult2.Response.characters.data[characterIds[2]].classHash}`,
+                        race: "",
+                        class: "",
+                        emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[2]].emblemBackgroundPath}`,
+                        characterObj: {
+                          kineticWeapons: [] as itemArrayType,
+                          energyWeapons: [] as itemArrayType,
+                          heavyWeapons: [] as itemArrayType,
+                          helmet: [] as itemArrayType,
+                          arms: [] as itemArrayType,
+                          chest: [] as itemArrayType,
+                          legs: [] as itemArrayType,
+                          classItem: [] as itemArrayType,
+                          ghost: [] as itemArrayType,
+                          // banner: [] as itemArrayType,
+                          emblem: [] as itemArrayType,
+                          ship: [] as itemArrayType,
+                          sparrow: [] as itemArrayType,
+                          // emotes: [] as itemArrayType,
+                          inventory: [] as itemArrayType,
+                          subclass: [] as itemArrayType,
+                        },
+                      },
                     };
-                    // console.log("🚀 ~ getInventoryData ~ itemObj:", itemObj);
-                    const bucketSelect = {
-                      kineticWeapons: "Kinetic Weapons",
-                      energyWeapons: "Energy Weapons",
-                      heavyWeapons: "Power Weapons",
-                      helmet: "Helmet",
-                      arms: "Gauntlets",
-                      chest: "Chest Armor",
-                      legs: "Leg Armor",
-                      classItem: "Class Armor",
-                      ghost: "Ghost",
-                      // "banner": "Clan Banners",
-                      emblem: "Emblems",
-                      ship: "Ships",
-                      sparrow: "Vehicle",
-                      // "emotes": "Emotes",
-                      // "inventory": "",
-                      subclass: "Subclass",
-                      // "finishers": "Finishers",
-                    };
-  
-                    for (const [key, value] of Object.entries(bucketSelect)) {
+                    // console.log("🚀 ~ fetchAuthToken ~ dataState:", dataState)
+
+                    for (const [key] of Object.entries(dataState)) {
                       // console.log(`key: ${key}, value: ${value}`);
-                      if (itemObj.bucket === value) {
-                        key;
-                        // const lmao = dataObj[characterIds[0] as keyof object].characterObj[key as keyof object]
-                        // lmao.push(itemObj)
-                        // console.log(
-                        //   "debug",
-                        //   dataObj[characterIds[0] as keyof object].characterObj[
-                          //     key as keyof object
-                          //   ],
-                        // );
-                        // if (
-                          //   Array.isArray(
-                        //     dataObj[characterIds[0] as keyof object].characterObj[
-                          //       key as keyof object
-                        //     ],
-                        //   )
-                        // ) {
-                          // console.log("test", dataObj)
-                          // const modify : Array<object> = dataState[characterIds[0] as keyof object].characterObj[key as keyof object]
-                          // modify.push(itemObj)
-                          // dataState[characterIds[0] as keyof object].characterObj[`${key}` as keyof object] = modify;
-                          // const modify : Array<object> = []
-                          // modify.push(itemObj)
-                          // dataState[characterIds[0] as keyof object].charObj[
-                          //   `${key}` as keyof object
-                          // ] = modify;
-                          dataState[characterIds[0] as keyof object].characterObj[
-                            key as keyof characterObjType
-                          ].push(itemObj);
-                          // char1State.characterObj[
-                          //   key as keyof itemArrayType
-                          // ].push(itemObj);
-                        // }
-                        // itemObj;
+                      if (
+                        userProfileResult2.Response.characters.data[key]
+                          .raceType === 0
+                      ) {
+                        dataState[key].race = "Human";
+                      } else if (
+                        userProfileResult2.Response.characters.data[key]
+                          .raceType === 1
+                      ) {
+                        dataState[key].race = "Awoken";
+                      } else if (
+                        userProfileResult2.Response.characters.data[key]
+                          .raceType === 2
+                      ) {
+                        dataState[key].race = "Exo";
+                      }
+                      if (
+                        userProfileResult2.Response.characters.data[key]
+                          .classType === 0
+                      ) {
+                        dataState[key].class = "Titan";
+                      } else if (
+                        userProfileResult2.Response.characters.data[key]
+                          .classType === 1
+                      ) {
+                        dataState[key].class = "Hunter";
+                      } else if (
+                        userProfileResult2.Response.characters.data[key]
+                          .classType === 2
+                      ) {
+                        dataState[key].class = "Warlock";
                       }
                     }
-                    // return itemObj
-                    // ! Modify the data object with setData
-                  }
-                  console.log(
-                    "🚀 ~ fetchTotalInventory ~ dataState with arrays:",
-                    dataState,
-                  );
-                  setData(dataState);
-                // };
-                  // const datarelay = data as dataStateType;
-                // getCharacterInventoryData(dataState,
-                //   characterInventory.equipment.data.items, true
-                // );
-  
-              } catch (err) {
-                console.error("Error fetching character inventories:", err);
-              }
-            } catch (error) {
-              console.error("Error fetching character IDs:", error);
-            }
-          } catch (error) {
-            console.error("Error fetching membership ID:", error);
-          }
-        }
-        
+
+                    setData(dataState);
+                    // console.log("first setData", data)
 
 
 
@@ -804,494 +499,546 @@ type characterObjType = {
 
 
 
+
+
+
+
+                    // ! Put this into a function to be called once for each character
+                    // const setCharacterInventories = async (
+                    //   dataObj: dataStateType,
+                    //   charNum: number
+                    // ) => {
+                      // fetch character inventories
+                    // First character
+                    try {
+                      const characterInventoryResponse = await fetch(
+                        `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[0]}/?components=CharacterInventories,CharacterEquipment`,
+                        {
+                          method: "GET",
+                          headers: {
+                            "X-API-Key": apiKey,
+                            Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                          },
+                        },
+                      );
+
+                      const characterInventoryResult =
+                        await characterInventoryResponse.json();
+                      // console.log(
+                      //   "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
+                      //   characterInventoryResult,
+                      // );
+                      const characterInventory =
+                        characterInventoryResult.Response;
+                      console.log(
+                        "🚀 ~ fetchTotalInventory ~ characterInventory:",
+                        characterInventory,
+                      );
+                      // console.log("test", characterInventory.equipment.data.items)
+
+                      type hashArr = [
+                        {
+                          itemHash: number;
+                          bucketHash: number;
+                        },
+                      ];
+
+                      const getCharacterInventoryData = async (
+                        dataObj: dataStateType,
+                        hashArray: hashArr,
+                        charNum: number,
+                        equipBool: boolean,
+                      ) => {
+                        const db = new Database(
+                          `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
+                        );
+                        // hashArray.forEach((id) => {
+
+                        // })
+                        // const dataObj : dataStateType = data;
+                        // console.log("🚀 ~ //getCharacterInventoryData ~ data:", data)
+                        // console.log("🚀 ~ //getCharacterInventoryData ~ dataObj:", dataObj)
+                        // console.log("🚀 ~ fetchTotalInventory ~ dataObject:", dataState);
+                        // const hashArray : hashArr = characterInventory.equipment.data.items;
+                        // const equipBool = true;
+                        for (const id of hashArray) {
+                          // Get item info
+                          const result = await db.sql`
+      USE DATABASE Manifest.sqlite;
+      SELECT * FROM DestinyInventoryItemDefinition WHERE id + 4294967296 = ${id.itemHash} OR id = ${id.itemHash};`;
+                          // console.log("🚀 ~ hashArray.forEach ~ result:", result)
+                          const resultJson = JSON.parse(result[0].json);
+                          // console.log("🚀 ~ getInventoryData ~ resultJson:", resultJson)
+
+                          // Get bucket name
+                          const bucketResult = await db.sql`
+      USE DATABASE Manifest.sqlite;
+      SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.bucketHash} OR id = ${id.bucketHash};`;
+                          // console.log("🚀 ~ getInventoryData ~ bucketResult:", bucketResult)
+                          const bucketResultJson = JSON.parse(
+                            bucketResult[0].json,
+                          );
+                          // console.log(
+                          //   "🚀 ~ getInventoryData ~ bucketResultJson:",
+                          //   bucketResultJson,
+                          // );
+
+                          const itemObj: itemObjType = {
+                            hash: id.itemHash,
+                            bucketHash: id.bucketHash,
+                            tableId: result[0].id,
+                            name: resultJson.displayProperties.name,
+                            icon: resultJson.displayProperties.icon,
+                            flavorText: resultJson.flavorText,
+                            rarity: resultJson.inventory.tierTypeName,
+                            itemType: resultJson.itemTypeDisplayName,
+                            bucket: bucketResultJson.displayProperties.name,
+                            equipped: equipBool,
+                          };
+                          // console.log("🚀 ~ getInventoryData ~ itemObj:", itemObj);
+                          const bucketSelect = {
+                            kineticWeapons: "Kinetic Weapons",
+                            energyWeapons: "Energy Weapons",
+                            heavyWeapons: "Power Weapons",
+                            helmet: "Helmet",
+                            arms: "Gauntlets",
+                            chest: "Chest Armor",
+                            legs: "Leg Armor",
+                            classItem: "Class Armor",
+                            ghost: "Ghost",
+                            // "banner": "Clan Banners",
+                            emblem: "Emblems",
+                            ship: "Ships",
+                            sparrow: "Vehicle",
+                            // "emotes": "Emotes",
+                            // "inventory": "",
+                            subclass: "Subclass",
+                            // "finishers": "Finishers",
+                          };
+
+                          for (const [key, value] of Object.entries(
+                            bucketSelect,
+                          )) {
+                            // console.log(`key: ${key}, value: ${value}`);
+                            if (itemObj.bucket === value) {
+                              key;
+                              dataObj[
+                                characterIds[charNum] as keyof object
+                              ].characterObj[
+                                key as keyof characterObjType
+                              ].push(itemObj);
+                            }
+                          }
+                          // return itemObj
+                          // ! Modify the data object with setData
+                        }
+                        console.log(
+                          "🚀 ~ fetchTotalInventory ~ dataObj with arrays:",
+                          dataObj,
+                        );
+                        setData(dataObj);
+                        // dataState = dataObj;
+                        // return dataState;
+                        return dataObj;
+                      };
+                      // const datarelay = data as dataStateType;
+                      dataState = await getCharacterInventoryData(
+                        dataState,
+                        characterInventory.equipment.data.items,
+                        0,
+                        true,
+                      );
+
+                      // console.log(
+                      //   "🚀 ~ getCharacterInventoryData ~ dataState post charinv:",
+                      //   dataState,
+                      // );
                     } catch (err) {
-                      console.error("Error fetching user data:", err);
+                      console.error(
+                        "Error fetching character inventories:",
+                        err,
+                      );
                     }
+                  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  } catch (error) {
+                    console.error("Error fetching character IDs:", error);
                   }
                 } catch (error) {
-                  console.error("Error fetching auth token:", error);
+                  console.error("Error fetching membership ID:", error);
                 }
               }
-      
-        
-        // TODO Issue here is that this check makes loginState required, and if I put it in as a dependancy below in the function, then for some reason the app is unable to get the membership id data
-        //  if (loginState) {
-          setTimeout(
-            () => {
-              window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
+            } catch (err) {
+              console.error("Error fetching user data:", err);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching auth token:", error);
+        }
+      }
+
+      // TODO Issue here is that this check makes loginState required, and if I put it in as a dependancy below in the function, then for some reason the app is unable to get the membership id data
+      //  if (loginState) {
+      setTimeout(
+        () => {
+          window.location.href = `${import.meta.env.VITE_AUTHORISATION_URL}`;
         },
         1000 * 60 * 60,
       );
       // }
     };
-    
-    
+
     fetchAuthToken();
   }, []);
-  
+
   // try to get initial slot and inventory data
   // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  // TODO You might need to put this in a separate useEffect hook or something. You want it to trigger on state change of login, so might need an event listener
-  useEffect(() => {
-    // const fetchTotalInventory = async () => {
-    //   const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
-    //   if (loginState) {
-    //     // console.log("🚀 ~ fetchTotalInventory ~ loginState:", loginState)
-    //     try {
-    //       // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
-    //       // fetch Membership type and ID
-    //       const userMembershipsResponse = await fetch(
-    //         "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
-    //         {
-    //           method: "GET",
-    //           headers: {
-    //             "X-API-Key": apiKey,
-    //             Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-    //           },
-    //           body: null,
-    //         },
-    //       );
-
-    //       const userMembershipsResult = await userMembershipsResponse.json();
-    //       // console.log(
-    //       //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
-    //       //   userMembershipsResult,
-    //       // );
-    //       const membershipType =
-    //         userMembershipsResult.Response.destinyMemberships[0].membershipType;
-    //       const membershipId =
-    //         userMembershipsResult.Response.destinyMemberships[0].membershipId;
-    //       // console.log(
-    //       //   "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
-    //       //   userMembershipsResult.Response.destinyMemberships[0].membershipType,
-    //       //   userMembershipsResult.Response.destinyMemberships[0].membershipId,
-    //       // );
-
-    //       // fetch character ids
-    //       try {
-    //         const userProfileResponse = await fetch(
-    //           `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
-    //           {
-    //             method: "GET",
-    //             headers: {
-    //               "X-API-Key": apiKey,
-    //               Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-    //             },
-    //           },
-    //         );
-
-    //         const userProfileResult = await userProfileResponse.json();
-    //         // console.log(
-    //         //   "🚀 ~ fetchTotalInventory ~ userProfileResult:",
-    //         //   userProfileResult,
-    //         // );
-    //         const characterIds =
-    //           userProfileResult.Response.profile.data.characterIds;
-    //         console.log(
-    //           "🚀 ~ fetchTotalInventory ~ characterIds:",
-    //           characterIds,
-    //         );
-    //         document.getElementsByClassName("characterIds")[0].innerHTML =
-    //           `Character IDs: ${characterIds[0]}, ${characterIds[1]}, ${characterIds[2]}`;
-
-    //         const userProfileResponse2 = await fetch(
-    //           `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Characters`,
-    //           {
-    //             method: "GET",
-    //             headers: {
-    //               "X-API-Key": apiKey,
-    //               Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-    //             },
-    //           },
-    //         );
-
-    //         const userProfileResult2 = await userProfileResponse2.json();
-    //         console.log(
-    //           "🚀 ~ fetchTotalInventory ~ userProfileResult2:",
-    //           userProfileResult2,
-    //         );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //         // console.log("drill", userProfileResult2.Response.characters.data[characterIds[0]])
-            
-    //         // const dataState: dataStateType = {
-    //         const dataState : dataStateType = {
-    //           [`${characterIds[0]}`]: {
-    //             raceType: `${userProfileResult2.Response.characters.data[characterIds[0]].raceType}`,
-    //             raceHash: `${userProfileResult2.Response.characters.data[characterIds[0]].raceHash}`,
-    //             classType: `${userProfileResult2.Response.characters.data[characterIds[0]].classType}`,
-    //             classHash: `${userProfileResult2.Response.characters.data[characterIds[0]].classHash}`,
-    //             race: "",
-    //             class: "",
-    //             emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[0]].emblemBackgroundPath}`,
-    //             characterObj: {
-    //               kineticWeapons: [],
-    //               energyWeapons: [],
-    //               heavyWeapons: [],
-    //               helmet: [],
-    //               arms: [],
-    //               chest: [],
-    //               legs: [],
-    //               classItem: [],
-    //               ghost: [],
-    //               // banner: [],
-    //               emblem: [],
-    //               ship: [],
-    //               sparrow: [],
-    //               // emotes: [],
-    //               inventory: [],
-    //               subclass: [],
-    //             },
-    //           },
-    //           [`${characterIds[1]}`]: {
-    //             raceType: `${userProfileResult2.Response.characters.data[characterIds[1]].raceType}`,
-    //             raceHash: `${userProfileResult2.Response.characters.data[characterIds[1]].raceHash}`,
-    //             classType: `${userProfileResult2.Response.characters.data[characterIds[1]].classType}`,
-    //             classHash: `${userProfileResult2.Response.characters.data[characterIds[1]].classHash}`,
-    //             race: "",
-    //             class: "",
-    //             emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[1]].emblemBackgroundPath}`,
-    //             characterObj: {
-    //               kineticWeapons: [],
-    //               energyWeapons: [],
-    //               heavyWeapons: [],
-    //               helmet: [],
-    //               arms: [],
-    //               chest: [],
-    //               legs: [],
-    //               classItem: [],
-    //               ghost: [],
-    //               // banner: [],
-    //               emblem: [],
-    //               ship: [],
-    //               sparrow: [],
-    //               // emotes: [],
-    //               inventory: [],
-    //               subclass: [],
-    //             },
-    //           },
-    //           [`${characterIds[2]}`]: {
-    //             raceType: `${userProfileResult2.Response.characters.data[characterIds[2]].raceType}`,
-    //             raceHash: `${userProfileResult2.Response.characters.data[characterIds[2]].raceHash}`,
-    //             classType: `${userProfileResult2.Response.characters.data[characterIds[2]].classType}`,
-    //             classHash: `${userProfileResult2.Response.characters.data[characterIds[2]].classHash}`,
-    //             race: "",
-    //             class: "",
-    //             emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[2]].emblemBackgroundPath}`,
-    //             characterObj: {
-    //               kineticWeapons: [],
-    //               energyWeapons: [],
-    //               heavyWeapons: [],
-    //               helmet: [],
-    //               arms: [],
-    //               chest: [],
-    //               legs: [],
-    //               classItem: [],
-    //               ghost: [],
-    //               // banner: [],
-    //               emblem: [],
-    //               ship: [],
-    //               sparrow: [],
-    //               // emotes: [],
-    //               inventory: [],
-    //               subclass: [],
-    //             },
-    //           },
-    //         };
-
-    //         for (const [key] of Object.entries(dataState)) {
-    //           // console.log(`key: ${key}, value: ${value}`);
-    //           if (
-    //             userProfileResult2.Response.characters.data[key].raceType === 0
-    //           ) {
-    //             dataState[key].race = "Human";
-    //           } else if (
-    //             userProfileResult2.Response.characters.data[key].raceType === 1
-    //           ) {
-    //             dataState[key].race = "Awoken";
-    //           } else if (
-    //             userProfileResult2.Response.characters.data[key].raceType === 2
-    //           ) {
-    //             dataState[key].race = "Exo";
-    //           }
-    //           if (
-    //             userProfileResult2.Response.characters.data[key].classType === 0
-    //           ) {
-    //             dataState[key].class = "Titan";
-    //           } else if (
-    //             userProfileResult2.Response.characters.data[key].classType === 1
-    //           ) {
-    //             dataState[key].class = "Hunter";
-    //           } else if (
-    //             userProfileResult2.Response.characters.data[key].classType === 2
-    //           ) {
-    //             dataState[key].class = "Warlock";
-    //           }
-    //         }
-
-    //         setData(dataState);
-    //         // console.log("dataobj", data)
-
-    //         //         const db = new Database(
-    //         //           `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
-    //         //         );
-    //         //         const getCharacterRaceClass = async (
-    //         //           raceHash: number,
-    //         //           classHash: number,
-    //         //         ) => {
-
-    //         //             // Get item info
-    //         //             const raceResult = await db.sql`
-    //         // USE DATABASE Manifest.sqlite;
-    //         // SELECT * FROM DestinyRaceDefinition WHERE id + 4294967296 = ${raceHash} OR id = ${raceHash};`;
-    //         //             console.log("🚀 ~ hashArray.forEach ~ result:", raceResult)
-    //         //             // ! See if you can index directly into the JSON so you can directly make an object and save it to data
-    //         //             // const raceResultJson = JSON.parse(raceResult[0].json);
-    //         //             // console.log("🚀 ~ raceResultJson:", raceResultJson)
-
-    //         //             // Get bucket name
-    //         //             const classResult = await db.sql`
-    //         // USE DATABASE Manifest.sqlite;
-    //         // SELECT * FROM DestinyClassDefinition WHERE id + 4294967296 = ${classHash} OR id = ${classHash};`;
-    //         //             // console.log("🚀 ~ getInventoryData ~ bucketResult:", bucketResult)
-    //         //             const classResultJson = JSON.parse(classResult[0].json);
-    //         //             console.log(
-    //         //               "🚀 ~ classResultJson:",
-    //         //               classResultJson,
-    //         //             );
-
-    //         //         };
-    //         //         const dataState2 : object = data;
-    //         //         console.log("🚀 ~ fetchTotalInventory ~ dataState2:", dataState2)
-    //         //         console.log("🚀 ~ fetchTotalInventory ~ dataState2:", dataState2[characterIds[0] as keyof object].raceHash)
-    //         //         // characterIds[0]
-    //         //         getCharacterRaceClass(dataState2[characterIds[0] as keyof object].raceHash, dataState2[characterIds[0] as keyof object].classHash);
-
-    //         // fetch character inventories
-    //         // First character
-    //         try {
-    //           const characterInventoryResponse = await fetch(
-    //             `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[0]}/?components=CharacterInventories,CharacterEquipment`,
-    //             {
-    //               method: "GET",
-    //               headers: {
-    //                 "X-API-Key": apiKey,
-    //                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-    //               },
-    //             },
-    //           );
-
-    //           const characterInventoryResult =
-    //             await characterInventoryResponse.json();
-    //           // console.log(
-    //           //   "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
-    //           //   characterInventoryResult,
-    //           // );
-    //           const characterInventory = characterInventoryResult.Response;
-    //           console.log(
-    //             "🚀 ~ fetchTotalInventory ~ characterInventory:",
-    //             characterInventory,
-    //           );
-    //           // console.log("test", characterInventory.equipment.data.items)
-
-    //           type hashArr = [
-    //             {
-    //               itemHash: number;
-    //               bucketHash: number;
-    //             },
-    //           ];
-
-    //           const getCharacterInventoryData = async (dataObj: dataStateType, hashArray: hashArr, equipBool : boolean) => {
-    //             const db = new Database(
-    //               `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
-    //             );
-    //             // hashArray.forEach((id) => {
-
-    //             // })
-    //             // const dataObj = data as dataStateType;
-    //             console.log("🚀 ~ fetchTotalInventory ~ dataObject:", dataObj);
-    //             for (const id of hashArray) {
-    //               // Get item info
-    //               const result = await db.sql`
-    // USE DATABASE Manifest.sqlite;
-    // SELECT * FROM DestinyInventoryItemDefinition WHERE id + 4294967296 = ${id.itemHash} OR id = ${id.itemHash};`;
-    //               // console.log("🚀 ~ hashArray.forEach ~ result:", result)
-    //               const resultJson = JSON.parse(result[0].json);
-    //               // console.log("🚀 ~ getInventoryData ~ resultJson:", resultJson)
-
-    //               // Get bucket name
-    //               const bucketResult = await db.sql`
-    // USE DATABASE Manifest.sqlite;
-    // SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.bucketHash} OR id = ${id.bucketHash};`;
-    //               // console.log("🚀 ~ getInventoryData ~ bucketResult:", bucketResult)
-    //               const bucketResultJson = JSON.parse(bucketResult[0].json);
-    //               // console.log(
-    //               //   "🚀 ~ getInventoryData ~ bucketResultJson:",
-    //               //   bucketResultJson,
-    //               // );
-
-    //               const itemObj : itemObjType = {
-    //                 hash: id.itemHash,
-    //                 bucketHash: id.bucketHash,
-    //                 tableId: result[0].id,
-    //                 name: resultJson.displayProperties.name,
-    //                 icon: resultJson.displayProperties.icon,
-    //                 flavorText: resultJson.flavorText,
-    //                 rarity: resultJson.inventory.tierTypeName,
-    //                 itemType: resultJson.itemTypeDisplayName,
-    //                 bucket: bucketResultJson.displayProperties.name,
-    //                 equipped: equipBool,
-    //               };
-    //               // console.log("🚀 ~ getInventoryData ~ itemObj:", itemObj);
-    //               const bucketSelect = {
-    //                 kineticWeapons: "Kinetic Weapons",
-    //                 energyWeapons: "Energy Weapons",
-    //                 heavyWeapons: "Power Weapons",
-    //                 helmet: "Helmet",
-    //                 arms: "Gauntlets",
-    //                 chest: "Chest Armor",
-    //                 legs: "Leg Armor",
-    //                 classItem: "Class Armor",
-    //                 ghost: "Ghost",
-    //                 // "banner": "Clan Banners",
-    //                 emblem: "Emblems",
-    //                 ship: "Ships",
-    //                 sparrow: "Vehicle",
-    //                 // "emotes": "Emotes",
-    //                 // "inventory": "",
-    //                 subclass: "Subclass",
-    //                 // "finishers": "Finishers",
-    //               };
-
-    //               for (const [key, value] of Object.entries(bucketSelect)) {
-    //                 // console.log(`key: ${key}, value: ${value}`);
-    //                 if (itemObj.bucket === value) {
-    //                   // const lmao = dataObj[characterIds[0] as keyof object].characterObj[key as keyof object]
-    //                   // lmao.push(itemObj)
-    //                   // console.log(
-    //                   //   "debug",
-    //                   //   dataObj[characterIds[0] as keyof object].characterObj[
-    //                   //     key as keyof object
-    //                   //   ],
-    //                   // );
-    //                   // if (
-    //                   //   Array.isArray(
-    //                   //     dataObj[characterIds[0] as keyof object].characterObj[
-    //                   //       key as keyof object
-    //                   //     ],
-    //                   //   )
-    //                   // ) {
-    //                     console.log("test", dataObj)
-    //                     dataObj[characterIds[0] as keyof object].characterObj[
-    //                       key as keyof object
-    //                     ].push(itemObj);
-    //                   // }
-    //                   // itemObj;
-    //                 }
-    //               }
-    //               // return itemObj
-    //               // ! Modify the data object with setData
-    //             }
-    //             console.log(
-    //               "🚀 ~ fetchTotalInventory ~ dataObj with arrays:",
-    //               dataObj,
-    //             );
-    //             setData(dataObj);
-    //           };
-    //             // const datarelay = data as dataStateType;
-    //           getCharacterInventoryData(data,
-    //             characterInventory.equipment.data.items, true
-    //           );
-
-    //           // ! Test 
-    //           const variable = "test"
-    //           const test = {
-    //             test: [] as Array<object>
-    //           }
-    //           test[variable].push({hello: {"world": "bar"}})
-
-    //         } catch (err) {
-    //           console.error("Error fetching character inventories:", err);
-    //         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //       } catch (error) {
-    //         console.error("Error fetching character IDs:", error);
-    //       }
-    //     } catch (error) {
-    //       console.error("Error fetching membership ID:", error);
-    //     }
-    //   }
-    // };
-    // fetchTotalInventory();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  }, [loginState]);
+  //   useEffect(() => {
+  //     const fetchTotalInventory = async () => {
+  //       const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
+  //       if (loginState) {
+  //         // console.log("🚀 ~ fetchTotalInventory ~ loginState:", loginState)
+  //         try {
+  //           // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
+  //           // fetch Membership type and ID
+  //           const userMembershipsResponse = await fetch(
+  //             "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
+  //             {
+  //               method: "GET",
+  //               headers: {
+  //                 "X-API-Key": apiKey,
+  //                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+  //               },
+  //               body: null,
+  //             },
+  //           );
+
+  //           const userMembershipsResult = await userMembershipsResponse.json();
+  //           // console.log(
+  //           //   "🚀 ~ fetchAuthToken ~ userMembershipsResult:",
+  //           //   userMembershipsResult,
+  //           // );
+  //           const membershipType =
+  //             userMembershipsResult.Response.destinyMemberships[0].membershipType;
+  //           const membershipId =
+  //             userMembershipsResult.Response.destinyMemberships[0].membershipId;
+  //           // console.log(
+  //           //   "🚀 ~ fetchAuthToken ~ userMembershipsResult type and id:",
+  //           //   userMembershipsResult.Response.destinyMemberships[0].membershipType,
+  //           //   userMembershipsResult.Response.destinyMemberships[0].membershipId,
+  //           // );
+
+  //           // fetch character ids
+  //           try {
+  //             const userProfileResponse = await fetch(
+  //               `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Profiles`,
+  //               {
+  //                 method: "GET",
+  //                 headers: {
+  //                   "X-API-Key": apiKey,
+  //                   Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+  //                 },
+  //               },
+  //             );
+
+  //             const userProfileResult = await userProfileResponse.json();
+  //             // console.log(
+  //             //   "🚀 ~ fetchTotalInventory ~ userProfileResult:",
+  //             //   userProfileResult,
+  //             // );
+  //             const characterIds =
+  //               userProfileResult.Response.profile.data.characterIds;
+  //             console.log(
+  //               "🚀 ~ fetchTotalInventory ~ characterIds:",
+  //               characterIds,
+  //             );
+  //             document.getElementsByClassName("characterIds")[0].innerHTML =
+  //               `Character IDs: ${characterIds[0]}, ${characterIds[1]}, ${characterIds[2]}`;
+
+  //             const userProfileResponse2 = await fetch(
+  //               `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=Characters`,
+  //               {
+  //                 method: "GET",
+  //                 headers: {
+  //                   "X-API-Key": apiKey,
+  //                   Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+  //                 },
+  //               },
+  //             );
+
+  //             const userProfileResult2 = await userProfileResponse2.json();
+  //             console.log(
+  //               "🚀 ~ fetchTotalInventory ~ userProfileResult2:",
+  //               userProfileResult2,
+  //             );
+
+  // // ! Eventually put this into a function
+  //             // console.log("drill", userProfileResult2.Response.characters.data[characterIds[0]])
+
+  //             // const dataState: dataStateType = {
+  //               const dataState : dataStateType = {
+  //                 [`${characterIds[0]}`]: {
+  //                   raceType: `${userProfileResult2.Response.characters.data[characterIds[0]].raceType}`,
+  //                   raceHash: `${userProfileResult2.Response.characters.data[characterIds[0]].raceHash}`,
+  //                   classType: `${userProfileResult2.Response.characters.data[characterIds[0]].classType}`,
+  //                   classHash: `${userProfileResult2.Response.characters.data[characterIds[0]].classHash}`,
+  //                   race: "",
+  //                   class: "",
+  //                   emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[0]].emblemBackgroundPath}`,
+  //                   characterObj: {
+  //                     kineticWeapons: [] as itemArrayType,
+  //                     energyWeapons: [] as itemArrayType,
+  //                     heavyWeapons: [] as itemArrayType,
+  //                     helmet: [] as itemArrayType,
+  //                     arms: [] as itemArrayType,
+  //                     chest: [] as itemArrayType,
+  //                     legs: [] as itemArrayType,
+  //                     classItem: [] as itemArrayType,
+  //                     ghost: [] as itemArrayType,
+  //                     // banner: [] as itemArrayType,
+  //                     emblem: [] as itemArrayType,
+  //                     ship: [] as itemArrayType,
+  //                     sparrow: [] as itemArrayType,
+  //                     // emotes: [] as itemArrayType,
+  //                     inventory: [] as itemArrayType,
+  //                     subclass: [] as itemArrayType,
+  //                   },
+  //                 },
+  //                 [`${characterIds[1]}`]: {
+  //                   raceType: `${userProfileResult2.Response.characters.data[characterIds[1]].raceType}`,
+  //                   raceHash: `${userProfileResult2.Response.characters.data[characterIds[1]].raceHash}`,
+  //                   classType: `${userProfileResult2.Response.characters.data[characterIds[1]].classType}`,
+  //                   classHash: `${userProfileResult2.Response.characters.data[characterIds[1]].classHash}`,
+  //                   race: "",
+  //                   class: "",
+  //                   emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[1]].emblemBackgroundPath}`,
+  //                   characterObj: {
+  //                     kineticWeapons: [] as itemArrayType,
+  //                     energyWeapons: [] as itemArrayType,
+  //                     heavyWeapons: [] as itemArrayType,
+  //                     helmet: [] as itemArrayType,
+  //                     arms: [] as itemArrayType,
+  //                     chest: [] as itemArrayType,
+  //                     legs: [] as itemArrayType,
+  //                     classItem: [] as itemArrayType,
+  //                     ghost: [] as itemArrayType,
+  //                     // banner: [] as itemArrayType,
+  //                     emblem: [] as itemArrayType,
+  //                     ship: [] as itemArrayType,
+  //                     sparrow: [] as itemArrayType,
+  //                     // emotes: [] as itemArrayType,
+  //                     inventory: [] as itemArrayType,
+  //                     subclass: [] as itemArrayType,
+  //                   },
+  //                 },
+  //                 [`${characterIds[2]}`]: {
+  //                   raceType: `${userProfileResult2.Response.characters.data[characterIds[2]].raceType}`,
+  //                   raceHash: `${userProfileResult2.Response.characters.data[characterIds[2]].raceHash}`,
+  //                   classType: `${userProfileResult2.Response.characters.data[characterIds[2]].classType}`,
+  //                   classHash: `${userProfileResult2.Response.characters.data[characterIds[2]].classHash}`,
+  //                   race: "",
+  //                   class: "",
+  //                   emblemBackgroundPath: `${userProfileResult2.Response.characters.data[characterIds[2]].emblemBackgroundPath}`,
+  //                   characterObj: {
+  //                     kineticWeapons: [] as itemArrayType,
+  //                     energyWeapons: [] as itemArrayType,
+  //                     heavyWeapons: [] as itemArrayType,
+  //                     helmet: [] as itemArrayType,
+  //                     arms: [] as itemArrayType,
+  //                     chest: [] as itemArrayType,
+  //                     legs: [] as itemArrayType,
+  //                     classItem: [] as itemArrayType,
+  //                     ghost: [] as itemArrayType,
+  //                     // banner: [] as itemArrayType,
+  //                     emblem: [] as itemArrayType,
+  //                     ship: [] as itemArrayType,
+  //                     sparrow: [] as itemArrayType,
+  //                     // emotes: [] as itemArrayType,
+  //                     inventory: [] as itemArrayType,
+  //                     subclass: [] as itemArrayType,
+  //                   },
+  //                 },
+  //               };
+
+  //             for (const [key] of Object.entries(dataState)) {
+  //               // console.log(`key: ${key}, value: ${value}`);
+  //               if (
+  //                 userProfileResult2.Response.characters.data[key].raceType === 0
+  //               ) {
+  //                 dataState[key].race = "Human";
+  //               } else if (
+  //                 userProfileResult2.Response.characters.data[key].raceType === 1
+  //               ) {
+  //                 dataState[key].race = "Awoken";
+  //               } else if (
+  //                 userProfileResult2.Response.characters.data[key].raceType === 2
+  //               ) {
+  //                 dataState[key].race = "Exo";
+  //               }
+  //               if (
+  //                 userProfileResult2.Response.characters.data[key].classType === 0
+  //               ) {
+  //                 dataState[key].class = "Titan";
+  //               } else if (
+  //                 userProfileResult2.Response.characters.data[key].classType === 1
+  //               ) {
+  //                 dataState[key].class = "Hunter";
+  //               } else if (
+  //                 userProfileResult2.Response.characters.data[key].classType === 2
+  //               ) {
+  //                 dataState[key].class = "Warlock";
+  //               }
+  //             }
+
+  //             setData(dataState);
+  //             // console.log("dataobj", data)
+
+  //             // fetch character inventories
+  //             // First character
+  //             try {
+  //               const characterInventoryResponse = await fetch(
+  //                 `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[0]}/?components=CharacterInventories,CharacterEquipment`,
+  //                 {
+  //                   method: "GET",
+  //                   headers: {
+  //                     "X-API-Key": apiKey,
+  //                     Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+  //                   },
+  //                 },
+  //               );
+
+  //               const characterInventoryResult =
+  //                 await characterInventoryResponse.json();
+  //               // console.log(
+  //               //   "🚀 ~ fetchTotalInventory ~ characterInventoryResult:",
+  //               //   characterInventoryResult,
+  //               // );
+  //               const characterInventory = characterInventoryResult.Response;
+  //               console.log(
+  //                 "🚀 ~ fetchTotalInventory ~ characterInventory:",
+  //                 characterInventory,
+  //               );
+  //               // console.log("test", characterInventory.equipment.data.items)
+
+  //               type hashArr = [
+  //                 {
+  //                   itemHash: number;
+  //                   bucketHash: number;
+  //                 },
+  //               ];
+
+  //               const getCharacterInventoryData = async (dataObj: dataStateType, hashArray: hashArr, equipBool : boolean) => {
+  //                 const db = new Database(
+  //                   `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
+  //                 );
+  //                 // hashArray.forEach((id) => {
+
+  //                 // })
+  //                 // const dataObj = data as dataStateType;
+  //                 console.log("🚀 ~ fetchTotalInventory ~ dataObject:", dataObj);
+  //                 for (const id of hashArray) {
+  //                   // Get item info
+  //                   const result = await db.sql`
+  //     USE DATABASE Manifest.sqlite;
+  //     SELECT * FROM DestinyInventoryItemDefinition WHERE id + 4294967296 = ${id.itemHash} OR id = ${id.itemHash};`;
+  //                   // console.log("🚀 ~ hashArray.forEach ~ result:", result)
+  //                   const resultJson = JSON.parse(result[0].json);
+  //                   // console.log("🚀 ~ getInventoryData ~ resultJson:", resultJson)
+
+  //                   // Get bucket name
+  //                   const bucketResult = await db.sql`
+  //     USE DATABASE Manifest.sqlite;
+  //     SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.bucketHash} OR id = ${id.bucketHash};`;
+  //                   // console.log("🚀 ~ getInventoryData ~ bucketResult:", bucketResult)
+  //                   const bucketResultJson = JSON.parse(bucketResult[0].json);
+  //                   // console.log(
+  //                   //   "🚀 ~ getInventoryData ~ bucketResultJson:",
+  //                   //   bucketResultJson,
+  //                   // );
+
+  //                   const itemObj : itemObjType = {
+  //                     hash: id.itemHash,
+  //                     bucketHash: id.bucketHash,
+  //                     tableId: result[0].id,
+  //                     name: resultJson.displayProperties.name,
+  //                     icon: resultJson.displayProperties.icon,
+  //                     flavorText: resultJson.flavorText,
+  //                     rarity: resultJson.inventory.tierTypeName,
+  //                     itemType: resultJson.itemTypeDisplayName,
+  //                     bucket: bucketResultJson.displayProperties.name,
+  //                     equipped: equipBool,
+  //                   };
+  //                   // console.log("🚀 ~ getInventoryData ~ itemObj:", itemObj);
+  //                   const bucketSelect = {
+  //                     kineticWeapons: "Kinetic Weapons",
+  //                     energyWeapons: "Energy Weapons",
+  //                     heavyWeapons: "Power Weapons",
+  //                     helmet: "Helmet",
+  //                     arms: "Gauntlets",
+  //                     chest: "Chest Armor",
+  //                     legs: "Leg Armor",
+  //                     classItem: "Class Armor",
+  //                     ghost: "Ghost",
+  //                     // "banner": "Clan Banners",
+  //                     emblem: "Emblems",
+  //                     ship: "Ships",
+  //                     sparrow: "Vehicle",
+  //                     // "emotes": "Emotes",
+  //                     // "inventory": "",
+  //                     subclass: "Subclass",
+  //                     // "finishers": "Finishers",
+  //                   };
+
+  //                   for (const [key, value] of Object.entries(bucketSelect)) {
+  //                     // console.log(`key: ${key}, value: ${value}`);
+  //                     if (itemObj.bucket === value) {
+  //                       key;
+  //                       dataObj[characterIds[0] as keyof object].characterObj[
+  //                           key as keyof characterObjType
+  //                         ].push(itemObj);
+  //                     }
+  //                   }
+  //                   // return itemObj
+  //                   // ! Modify the data object with setData
+  //                 }
+  //                 // console.log(
+  //                 //   "🚀 ~ fetchTotalInventory ~ dataObj with arrays:",
+  //                 //   dataObj,
+  //                 // );
+  //                 setData(dataObj);
+  //               };
+
+  //               getCharacterInventoryData(data,
+  //                 characterInventory.equipment.data.items, true
+  //               );
+  //             } catch (err) {
+  //               console.error("Error fetching character inventories:", err);
+  //             }
+
+  //           } catch (error) {
+  //             console.error("Error fetching character IDs:", error);
+  //           }
+  //         } catch (error) {
+  //           console.error("Error fetching membership ID:", error);
+  //         }
+  //       }
+  //     };
+  //     fetchTotalInventory();
+
+  //   }, [loginState]);
 
   // ! Figure out how you want to structure the function to call the DB, and get items out of it
   // ! likely need to set up the DB accessing object for mapping onto the correct table based
