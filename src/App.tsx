@@ -111,7 +111,7 @@ function App() {
   // Todo if this authtoken state is not used, then get rid of it, it's currently set and never called
   // const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
   // const [db, setDb] = useState<any | null>(null);
-  const [data, setData] = useState<dataStateType>({}); // for the initial load data?, or do I separate it into the individual sections?
+  const [data, setData] = useState<dataStateType>({}); // * for the initial load data?, or do I separate it into the individual sections?
   // const [char1, setChar1] = useState({})
   const hashDict = {
     DestinyActivityDefinition: "activityHash",
@@ -207,6 +207,7 @@ function App() {
   // authToken;
   // data;
 
+  // * UseEffect that logs in the user and then gets their character inventories to set the data object
   useEffect(() => {
     const fetchAuthToken = async () => {
       // Clear local storage on initial load
@@ -363,6 +364,7 @@ function App() {
                     // );
                     // console.log("drill", userProfileResult2.Response.characters.data[characterIds[0]])
 
+                    // * Initialise big data object
                     let dataState: dataStateType = {
                       [`${characterIds[0]}`]: {
                         raceType: `${userProfileResult2.Response.characters.data[characterIds[0]].raceType}`,
@@ -448,6 +450,7 @@ function App() {
                     };
                     // console.log("🚀 ~ fetchAuthToken ~ dataState:", dataState)
 
+                    // * Set character classes and races
                     for (const [key] of Object.entries(dataState)) {
                       // console.log(`key: ${key}, value: ${value}`);
                       if (
@@ -503,16 +506,15 @@ function App() {
 
 
 
-                    // ! Put this into a function to be called once for each character
-                    // const setCharacterInventories = async (
-                    //   dataObj: dataStateType,
-                    //   charNum: number
-                    // ) => {
-                      // fetch character inventories
-                    // First character
+                    // * Function to populate data object with char items
+                    const setCharacterInventories = async (
+                      dataObj: dataStateType,
+                      charNum: number
+                    ) => {
+                      // * Fetch character inventories
                     try {
                       const characterInventoryResponse = await fetch(
-                        `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[0]}/?components=CharacterInventories,CharacterEquipment`,
+                        `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[charNum]}/?components=CharacterInventories,CharacterEquipment`,
                         {
                           method: "GET",
                           headers: {
@@ -530,10 +532,10 @@ function App() {
                       // );
                       const characterInventory =
                         characterInventoryResult.Response;
-                      console.log(
-                        "🚀 ~ fetchTotalInventory ~ characterInventory:",
-                        characterInventory,
-                      );
+                      // console.log(
+                      //   "🚀 ~ fetchTotalInventory ~ characterInventory:",
+                      //   characterInventory,
+                      // );
                       // console.log("test", characterInventory.equipment.data.items)
 
                       type hashArr = [
@@ -543,10 +545,11 @@ function App() {
                         },
                       ];
 
+                      // * Function to call sqlite server to retrieve character item info and populate the data object
                       const getCharacterInventoryData = async (
-                        dataObj: dataStateType,
+                        // dataObj: dataStateType,
                         hashArray: hashArr,
-                        charNum: number,
+                        // charNum: number,
                         equipBool: boolean,
                       ) => {
                         const db = new Database(
@@ -632,35 +635,52 @@ function App() {
                           // return itemObj
                           // ! Modify the data object with setData
                         }
-                        console.log(
-                          "🚀 ~ fetchTotalInventory ~ dataObj with arrays:",
-                          dataObj,
-                        );
+                        // console.log(
+                        //   "🚀 ~ fetchTotalInventory ~ dataObj with arrays:",
+                        //   dataObj,
+                        // );
                         setData(dataObj);
                         // dataState = dataObj;
                         // return dataState;
                         return dataObj;
                       };
                       // const datarelay = data as dataStateType;
-                      dataState = await getCharacterInventoryData(
-                        dataState,
+                      // * Call the function twice to populate the equipped items and the unequipped ones
+                      dataObj = await getCharacterInventoryData(
+                        // dataState,
                         characterInventory.equipment.data.items,
-                        0,
+                        // charNum,
                         true,
                       );
-
-                      // console.log(
-                      //   "🚀 ~ getCharacterInventoryData ~ dataState post charinv:",
-                      //   dataState,
-                      // );
-                    } catch (err) {
-                      console.error(
-                        "Error fetching character inventories:",
-                        err,
+                      dataObj = await getCharacterInventoryData(
+                        // dataState,
+                        characterInventory.inventory.data.items,
+                        // charNum,
+                        false,
                       );
-                    }
-                  // }
-
+                      return dataObj;
+                      // console.log(
+                        //   "🚀 ~ getCharacterInventoryData ~ dataState post charinv:",
+                        //   dataState,
+                        // );
+                      } catch (err) {
+                        console.error(
+                          "Error fetching character inventories:",
+                          err,
+                        );
+                      }
+                      return dataObj;
+                  }
+                  // * Call the inventory function 3 times to populate all characters
+                  dataState = await setCharacterInventories(dataState, 0)
+                  if (characterIds[1]) {
+                    dataState = await setCharacterInventories(dataState, 1)
+                  }
+                  if (characterIds[2]) {
+                    dataState = await setCharacterInventories(dataState, 2)
+                  }
+                  console.log("🚀 ~ fetchAuthToken ~ dataState:", dataState)
+                  setData(dataState)
 
 
 
