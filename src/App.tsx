@@ -6,6 +6,7 @@ import "./App.css";
 import { Database } from "@sqlitecloud/drivers";
 
 import {itemObjType, itemArrayType, characterObjType, dataStateType} from "./CustomTypes"
+// import Characters from "./components/Characters";
 
 // const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
 
@@ -177,6 +178,7 @@ function App() {
   // const [db, setDb] = useState<any | null>(null);
   const [data, setData] = useState<dataStateType>({}); // * for the initial load data?, or do I separate it into the individual sections?
   // const [char1, setChar1] = useState({})
+  // console.log("props", Object.getOwnPropertyNames(data).length)
   // const hashDict = {
   //   DestinyActivityDefinition: "activityHash",
   //   DestinyActivityTypeDefinition: "activityTypeHash",
@@ -375,6 +377,7 @@ function App() {
 
                     // * Initialise big data object
                     let dataState: dataStateType = {
+                      // initialised: true,
                       [`${characterIds[0]}`]: {
                         raceType: `${userProfileResult2.Response.characters.data[characterIds[0]].raceType}`,
                         raceHash: `${userProfileResult2.Response.characters.data[characterIds[0]].raceHash}`,
@@ -672,6 +675,7 @@ function App() {
                       return dataObj;
                   }
                   // * Call the inventory function 3 times to populate all characters
+                  
                   document.getElementsByClassName("loadingMessage")[0].innerHTML = "Parsing character 1 data.";
                   dataState = await setCharacterInventories(dataState, 0)
                   if (characterIds[1]) {
@@ -927,8 +931,8 @@ function App() {
       </div>
 
       <div className="characters">
-        <p className="loadingMessage">Please log in with the button at the top left.</p>
-        {/* <Characters data={data}/> */}
+        <p className="loadingMessage">Please log in with the button at the top right.</p>
+        {/* {data ? (<Characters data={data}/>) : (<p>Awaiting character data</p>)} */}
         <p className="data">{JSON.stringify(data)}</p>
       </div>
         

@@ -31,6 +31,7 @@ type itemObjType = {
   };
   // type itemArrayType = [itemObjType];
   type dataStateType = {
+    // initialised: boolean;
     [propName: string]: {
       raceType: string;
       raceHash: string;
@@ -58,6 +59,7 @@ type itemObjType = {
         subclass: itemArrayType;
       };
     };
-  };
+  }
+  //  | undefined;
 
   export { type itemObjType, type itemArrayType, type characterObjType, type dataStateType};
