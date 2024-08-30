@@ -12,7 +12,7 @@ import {
   dataStateType,
   // singleCharacterType,
 } from "./CustomTypes"
-// import Characters from "./components/Characters";
+import Characters from "./components/Characters";
 
 // const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
 
@@ -269,6 +269,7 @@ function App() {
   // const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
   // const [db, setDb] = useState<any | null>(null);
   const [data, setData] = useState<dataStateType>(initialDataArr); // * for the initial load data?, or do I separate it into the individual sections?
+  // const [isFetching, setIsFetching] = useState(true)
   // const [char1, setChar1] = useState({})
   // console.log("props", Object.getOwnPropertyNames(data).length)
   // const hashDict = {
@@ -746,10 +747,10 @@ function App() {
                         true,
                       );
                       // ! For testing disable this to have the DB load faster
-                      // dataObj = await getCharacterInventoryData(
-                      //   characterInventory.inventory.data.items,
-                      //   false,
-                      // );
+                      dataObj = await getCharacterInventoryData(
+                        characterInventory.inventory.data.items,
+                        false,
+                      );
 
                       return dataObj;
                       // console.log(
@@ -779,36 +780,37 @@ function App() {
                   })
                   
                   console.log("🚀 ~ fetchAuthToken ~ dataState post sql:", dataState)
-                  setData(dataState)
+                  setData([...dataState])
                   document.getElementsByClassName("loadingMessage")[0].innerHTML = "Character data parsed.";
+                  // setIsFetching(false)
+                  
+                  
+                  
+                  
+                  
 
-
-
-
-
-
-
-
-
-
-
-
-
-                  } catch (error) {
-                    console.error("Error fetching character IDs:", error);
-                  }
+                  
+                  
+                  
+                  
+                  
+                  
+                  
                 } catch (error) {
-                  console.error("Error fetching membership ID:", error);
+                  console.error("Error fetching character IDs:", error);
                 }
+              } catch (error) {
+                console.error("Error fetching membership ID:", error);
               }
-            } catch (err) {
-              console.error("Error fetching user data:", err);
             }
+          } catch (err) {
+            console.error("Error fetching user data:", err);
           }
-        } catch (error) {
-          console.error("Error fetching auth token:", error);
         }
+      } catch (error) {
+        console.error("Error fetching auth token:", error);
       }
+    }
 
       // TODO Issue here is that this check makes loginState required, and if I put it in as a dependancy below in the function, then for some reason the app is unable to get the membership id data
       //  if (loginState) {
@@ -1004,6 +1006,14 @@ function App() {
   //   fetchInventory();
   // }, [loginState]);
 
+  // useEffect(() => {
+  //  return (
+  //   <>
+  //     <Characters {...data}/>
+  //   </>
+  //  )
+  // }, [data]);
+
   return (
     <>
 
@@ -1024,7 +1034,8 @@ function App() {
 
       <div className="characters">
         <p className="loadingMessage">Please log in with the button at the top right.</p>
-        {/* {data ? (<Characters data={data}/>) : (<p>Awaiting character data</p>)} */}
+        {data[0].characterObj.kineticWeapons[0] ? (<Characters {...data}/>) : (<p>Awaiting character data</p>)}
+        {/* <Characters {...data}/> */}
         <p className="data">{JSON.stringify(data)}</p>
       </div>
         

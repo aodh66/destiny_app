@@ -31,7 +31,7 @@ type itemObjType = {
   };
   // type itemArrayType = [itemObjType];
   type singleCharacterType = {
-    characterId: string | undefined;
+    characterId: string;
     raceType: string;
     raceHash: string;
     classType: string;
