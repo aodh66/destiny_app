@@ -5,7 +5,13 @@ import "./App.css";
 
 import { Database } from "@sqlitecloud/drivers";
 
-import {itemObjType, itemArrayType, characterObjType, dataStateType} from "./CustomTypes"
+import {
+  itemObjType, 
+  itemArrayType, 
+  characterObjType, 
+  dataStateType,
+  // singleCharacterType,
+} from "./CustomTypes"
 // import Characters from "./components/Characters";
 
 // const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
@@ -169,6 +175,92 @@ import {itemObjType, itemArrayType, characterObjType, dataStateType} from "./Cus
 //     };
 //   };
 // };
+const initialDataArr: dataStateType = [
+  {
+    characterId: "",
+    raceType: "",
+    raceHash: "",
+    classType: "",
+    classHash: "",
+    race: "",
+    class: "",
+    emblemBackgroundPath: "",
+    characterObj: {
+      kineticWeapons: [] as itemArrayType,
+      energyWeapons: [] as itemArrayType,
+      heavyWeapons: [] as itemArrayType,
+      helmet: [] as itemArrayType,
+      arms: [] as itemArrayType,
+      chest: [] as itemArrayType,
+      legs: [] as itemArrayType,
+      classItem: [] as itemArrayType,
+      ghost: [] as itemArrayType,
+      // banner: [] as itemArrayType,
+      emblem: [] as itemArrayType,
+      ship: [] as itemArrayType,
+      sparrow: [] as itemArrayType,
+      // emotes: [] as itemArrayType,
+      inventory: [] as itemArrayType,
+      subclass: [] as itemArrayType,
+    },
+  },
+  {
+    characterId: "",
+    raceType: "",
+    raceHash: "",
+    classType: "",
+    classHash: "",
+    race: "",
+    class: "",
+    emblemBackgroundPath: "",
+    characterObj: {
+      kineticWeapons: [] as itemArrayType,
+      energyWeapons: [] as itemArrayType,
+      heavyWeapons: [] as itemArrayType,
+      helmet: [] as itemArrayType,
+      arms: [] as itemArrayType,
+      chest: [] as itemArrayType,
+      legs: [] as itemArrayType,
+      classItem: [] as itemArrayType,
+      ghost: [] as itemArrayType,
+      // banner: [] as itemArrayType,
+      emblem: [] as itemArrayType,
+      ship: [] as itemArrayType,
+      sparrow: [] as itemArrayType,
+      // emotes: [] as itemArrayType,
+      inventory: [] as itemArrayType,
+      subclass: [] as itemArrayType,
+    },
+  },
+  {
+    characterId: "",
+    raceType: "",
+    raceHash: "",
+    classType: "",
+    classHash: "",
+    race: "",
+    class: "",
+    emblemBackgroundPath: "",
+    characterObj: {
+      kineticWeapons: [] as itemArrayType,
+      energyWeapons: [] as itemArrayType,
+      heavyWeapons: [] as itemArrayType,
+      helmet: [] as itemArrayType,
+      arms: [] as itemArrayType,
+      chest: [] as itemArrayType,
+      legs: [] as itemArrayType,
+      classItem: [] as itemArrayType,
+      ghost: [] as itemArrayType,
+      // banner: [] as itemArrayType,
+      emblem: [] as itemArrayType,
+      ship: [] as itemArrayType,
+      sparrow: [] as itemArrayType,
+      // emotes: [] as itemArrayType,
+      inventory: [] as itemArrayType,
+      subclass: [] as itemArrayType,
+    },
+  },
+];
 
 function App() {
   const [loginState, setLoginState] = useState(false); // to track if it's logged in, and therefore whether the button is there
@@ -176,7 +268,7 @@ function App() {
   // Todo if this authtoken state is not used, then get rid of it, it's currently set and never called
   // const [authToken, setAuthToken] = useState(null); // auth token that will be used in requests and put into localstorage
   // const [db, setDb] = useState<any | null>(null);
-  const [data, setData] = useState<dataStateType>({}); // * for the initial load data?, or do I separate it into the individual sections?
+  const [data, setData] = useState<dataStateType>(initialDataArr); // * for the initial load data?, or do I separate it into the individual sections?
   // const [char1, setChar1] = useState({})
   // console.log("props", Object.getOwnPropertyNames(data).length)
   // const hashDict = {
@@ -376,9 +468,10 @@ function App() {
                     document.getElementsByClassName("loadingMessage")[0].innerHTML = "Character data received.";
 
                     // * Initialise big data object
-                    let dataState: dataStateType = {
-                      // initialised: true,
-                      [`${characterIds[0]}`]: {
+                    // ! Could initialise an array, then push each thing into it, then make an actual dataStateType equal to it?
+                    let dataState: dataStateType = [
+                      {
+                        characterId: `${characterIds[0]}`,
                         raceType: `${userProfileResult2.Response.characters.data[characterIds[0]].raceType}`,
                         raceHash: `${userProfileResult2.Response.characters.data[characterIds[0]].raceHash}`,
                         classType: `${userProfileResult2.Response.characters.data[characterIds[0]].classType}`,
@@ -405,7 +498,8 @@ function App() {
                           subclass: [] as itemArrayType,
                         },
                       },
-                      [`${characterIds[1]}`]: {
+                      {
+                        characterId: `${characterIds[1]}`,
                         raceType: `${userProfileResult2.Response.characters.data[characterIds[1]].raceType}`,
                         raceHash: `${userProfileResult2.Response.characters.data[characterIds[1]].raceHash}`,
                         classType: `${userProfileResult2.Response.characters.data[characterIds[1]].classType}`,
@@ -432,7 +526,8 @@ function App() {
                           subclass: [] as itemArrayType,
                         },
                       },
-                      [`${characterIds[2]}`]: {
+                      {
+                        characterId: `${characterIds[2]}`,
                         raceType: `${userProfileResult2.Response.characters.data[characterIds[2]].raceType}`,
                         raceHash: `${userProfileResult2.Response.characters.data[characterIds[2]].raceHash}`,
                         classType: `${userProfileResult2.Response.characters.data[characterIds[2]].classType}`,
@@ -459,45 +554,38 @@ function App() {
                           subclass: [] as itemArrayType,
                         },
                       },
-                    };
-                    // console.log("🚀 ~ fetchAuthToken ~ dataState:", dataState)
+                    ];
+                    // console.log("🚀 ~ fetchAuthToken ~ dataState just declared:", dataState)
 
                     // * Set character classes and races
-                    for (const [key] of Object.entries(dataState)) {
-                      // console.log(`key: ${key}, value: ${value}`);
-                      if (
-                        userProfileResult2.Response.characters.data[key]
-                          .raceType === 0
-                      ) {
-                        dataState[key].race = "Human";
-                      } else if (
-                        userProfileResult2.Response.characters.data[key]
-                          .raceType === 1
-                      ) {
-                        dataState[key].race = "Awoken";
-                      } else if (
-                        userProfileResult2.Response.characters.data[key]
-                          .raceType === 2
-                      ) {
-                        dataState[key].race = "Exo";
+                    dataState.map((element) => {
+                      // console.log("🚀 ~ dataState.map ~ element:", element)
+                      // console.log("🚀 ~ dataState.map ~ index:", index)
+                      const raceDict = {
+                        "Human" : "0",
+                        "Awoken" : "1",
+                        "Exo" : "2",
                       }
-                      if (
-                        userProfileResult2.Response.characters.data[key]
-                          .classType === 0
-                      ) {
-                        dataState[key].class = "Titan";
-                      } else if (
-                        userProfileResult2.Response.characters.data[key]
-                          .classType === 1
-                      ) {
-                        dataState[key].class = "Hunter";
-                      } else if (
-                        userProfileResult2.Response.characters.data[key]
-                          .classType === 2
-                      ) {
-                        dataState[key].class = "Warlock";
+                      const classDict = {
+                        "Titan" : "0",
+                        "Hunter" : "1",
+                        "Warlock" : "2",
                       }
-                    }
+                      for (const [key, value] of Object.entries(
+                        raceDict
+                      )) {
+                        if (value === element.raceType) {
+                          element.race = key
+                        }
+                      }
+                      for (const [key, value] of Object.entries(
+                        classDict
+                      )) {
+                        if (value === element.classType) {
+                          element.class = key
+                        }
+                      }
+                    })
 
                     setData(dataState);
                     // console.log("first setData", data)
@@ -524,10 +612,11 @@ function App() {
                       dataObj: dataStateType,
                       charNum: number
                     ) => {
+                      // console.log("🚀 ~ setCharacterInventories ~ dataObj:", dataObj)
                       // * Fetch character inventories
                     try {
                       const characterInventoryResponse = await fetch(
-                        `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${characterIds[charNum]}/?components=CharacterInventories,CharacterEquipment`,
+                        `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/Character/${dataObj[charNum].characterId}/?components=CharacterInventories,CharacterEquipment`,
                         {
                           method: "GET",
                           headers: {
@@ -636,7 +725,7 @@ function App() {
                             if (itemObj.bucket === value) {
                               key;
                               dataObj[
-                                characterIds[charNum] as keyof object
+                                charNum
                               ].characterObj[
                                 key as keyof characterObjType
                               ].push(itemObj);
@@ -661,6 +750,7 @@ function App() {
                       //   characterInventory.inventory.data.items,
                       //   false,
                       // );
+
                       return dataObj;
                       // console.log(
                         //   "🚀 ~ getCharacterInventoryData ~ dataState post charinv:",
@@ -675,18 +765,20 @@ function App() {
                       return dataObj;
                   }
                   // * Call the inventory function 3 times to populate all characters
+                  // dataState.map(async (element, index) => {
+                  //   // This needs to be here to silence an error, I need the index of the thing, not the elements themselves
+                  //   element;
+                  //   document.getElementsByClassName("loadingMessage")[0].innerHTML = `Parsing character ${index} data.`;
+                  //   dataState = await setCharacterInventories(dataState, index)
+                  // })
+                  dataState.forEach(async (element, index) => {
+                    // This needs to be here to silence a warning, I need the index of the thing, not the elements themselves
+                    element;
+                    document.getElementsByClassName("loadingMessage")[0].innerHTML = `Parsing character ${index} data.`;
+                    dataState = await setCharacterInventories(dataState, index)
+                  })
                   
-                  document.getElementsByClassName("loadingMessage")[0].innerHTML = "Parsing character 1 data.";
-                  dataState = await setCharacterInventories(dataState, 0)
-                  if (characterIds[1]) {
-                    document.getElementsByClassName("loadingMessage")[0].innerHTML = "Parsing character 2 data.";
-                    dataState = await setCharacterInventories(dataState, 1)
-                  }
-                  if (characterIds[2]) {
-                    document.getElementsByClassName("loadingMessage")[0].innerHTML = "Parsing character 3 data.";
-                    dataState = await setCharacterInventories(dataState, 2)
-                  }
-                  console.log("🚀 ~ fetchAuthToken ~ dataState:", dataState)
+                  console.log("🚀 ~ fetchAuthToken ~ dataState post sql:", dataState)
                   setData(dataState)
                   document.getElementsByClassName("loadingMessage")[0].innerHTML = "Character data parsed.";
 
