@@ -23,7 +23,6 @@
   align-items: center;
   height: 4em;
   /* border: 1px solid red; */
-  
 }
 
 .logoname {
@@ -31,9 +30,9 @@
   color: rgb(255, 0, 255);
   display: flex;
   align-items: center;
-padding: 0 1em;
-/* margin: 0 2em; */
-/* margin-right: auto; */
+  padding: 0 1em;
+  /* margin: 0 2em; */
+  /* margin-right: auto; */
 }
 
 .five {
@@ -47,7 +46,7 @@ padding: 0 1em;
 }
 
 .user {
-  display:flex;
+  display: flex;
   // justify-content: center;
   align-items: center;
   gap: 0.5em;
@@ -55,10 +54,60 @@ padding: 0 1em;
 }
 
 .userIcon {
-  height: 2em
+  height: 2em;
 }
 
 // .userName {
-  // padding-top: 17;
-  // margin-bottom: 0;
+// padding-top: 17;
+// margin-bottom: 0;
 // }
+
+.character {
+  border: 1px solid red;
+}
+
+.bucket {
+  border: 1px solid blue;
+}
+
+.charHead {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em;
+  gap: 1em;
+}
+
+.charTitle {
+  // justify-self: center;
+  margin: 0;
+}
+
+.charIcon {
+  height: 3em;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  // padding: 1em;
+  gap: 1em;
+}
+
+.itemIcon {
+  height: 3em;
+}
+
+.itemInfo {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+// margin: 0;
+}
+
+.itemName,
+.itemRarity,
+.itemFlavourText {
+  margin-bottom: 0;
+  font-size: 0.8em;
+}

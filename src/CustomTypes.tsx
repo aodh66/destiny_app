@@ -26,7 +26,7 @@ type itemObjType = {
     ship: itemArrayType;
     sparrow: itemArrayType;
     // emotes: itemArrayType;
-    inventory: itemArrayType;
+    // inventory: itemArrayType;
     subclass: itemArrayType;
   };
   // type itemArrayType = [itemObjType];
@@ -54,7 +54,7 @@ type itemObjType = {
       ship: itemArrayType;
       sparrow: itemArrayType;
       // emotes: itemArrayType;
-      inventory: itemArrayType;
+      // inventory: itemArrayType;
       subclass: itemArrayType;
     };
   };

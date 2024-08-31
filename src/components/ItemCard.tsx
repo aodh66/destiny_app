@@ -10,13 +10,23 @@ import {
 //   projects: ExampleProp[];
 // }
 
-const ItemCard = (item: itemObjType) => {
+const ItemCard = (item: itemObjType | undefined) => {
+  if (!item) {
+    return
+  }
   // console.log("🚀 ~ ItemCard ~ item:", item)
   return (
   <div className="item">
-    <p className="itemName">{item.name}</p>
-    <p className="itemRarity itemType">{item.rarity + " " + item.itemType}</p>
-    <p className="itemFlavourText">{item.flavorText}</p>
+    <img
+                    className="itemIcon"
+                    src={`https://www.bungie.net${item.icon}`}
+                    alt="item icon"
+                  />
+    <div className="itemInfo">
+      <p className="itemName">{item.name}</p>
+      <p className="itemRarity itemType">{item.rarity + " " + item.itemType}</p>
+      <p className="itemFlavourText">{item.flavorText}</p>
+    </div>
     {/* <p>{JSON.stringify(item)}</p> */}
     </div>
 )
