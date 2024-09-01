@@ -2154,19 +2154,11 @@ SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.buck
           Please log in with the button at the top right.
         </p>
         {data ? (
-          // <Characters data={data} />
           <Characters {...{data}} />
           // <p>test</p>
         ) : (
           <p>Awaiting character data</p>
         )}
-        {/* {data[0].characterObj.kineticWeapons[0].equipped ? (
-          <Characters {...data} />
-        ) : (
-          <p>Awaiting character data</p>
-        )} */}
-        {/* <Characters {...data}/> */}
-        {/* <p className="data">{JSON.stringify(data)}</p> */}
       </div>
 
       {/* <div className="debug">
