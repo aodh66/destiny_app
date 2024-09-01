@@ -62,6 +62,21 @@
 // margin-bottom: 0;
 // }
 
+.placeholder {
+  margin-top: 2em;
+}
+
+.loadingMessage {
+  margin-bottom: -2em;
+  font-size: 0.8em;
+  pointer-events: none
+}
+
+.transparent {
+  visibility: hidden;
+  opacity: 0;
+}
+
 .character {
   border: 1px solid red;
 }
