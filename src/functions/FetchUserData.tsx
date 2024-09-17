@@ -1,28 +1,31 @@
-import {
-  itemObjType,
-  itemArrayType,
-  characterObjType,
-  dataStateType,
-  userDataType,
-  characterDataObjType,
-  hashArr,
-  SQLResponseArr,
-  SQLResponseItem,
-  hashObj,
-  singleCharacterType,
-} from "../CustomTypes";
+// import {
+//   itemObjType,
+//   itemArrayType,
+//   characterObjType,
+//   dataStateType,
+//   userDataType,
+//   characterDataObjType,
+//   hashArr,
+//   SQLResponseArr,
+//   SQLResponseItem,
+//   hashObj,
+//   singleCharacterType,
+// } from "../CustomTypes";
 
-// * takes authConfirm if anything,
+      // * takes authConfirm if anything,
       // * grabs api key from localstorage, gets the user data,
       // * returns userData, object with the membershipType and membershipId (userprofileresult)
-      async function fetchUserData(authConfirm: boolean | undefined) {
+      async function fetchUserData(authConfirm: boolean | undefined | false) {
+        // exit if authConfirm is not true
         if (!authConfirm) {
           return undefined;
         } else if (!localStorage.getItem("localAuthToken")) {
           return undefined;
         }
+
+        // fetch user data
         try {
-          // if (authConfirm) {
+          // update loading message
           document.getElementsByClassName("loadingMessage")[0].innerHTML =
             "Getting user data";
           const userDataResponse = await fetch(
@@ -30,21 +33,19 @@ import {
             {
               method: "GET",
               headers: {
-                "X-API-Key": apiKey,
+                "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
               },
               body: null,
             },
           );
 
-          setLoginState(true);
           const userDataResult = await userDataResponse.json();
           // console.log(
           //   "🚀 ~ fetchAuthToken ~ userDataResult:",
           //   userDataResult,
           // );
-          document.getElementsByClassName("username")[0].innerHTML =
-            userDataResult.Response.uniqueName;
+          document.getElementsByClassName("username")[0].innerHTML = userDataResult.Response.uniqueName;
           document
             .getElementsByClassName("userIcon")[0]
             .setAttribute(
@@ -62,7 +63,7 @@ import {
               {
                 method: "GET",
                 headers: {
-                  "X-API-Key": apiKey,
+                  "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
                   Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
                 },
                 body: null,

@@ -1,36 +1,25 @@
-import {
-  itemObjType,
-  itemArrayType,
-  characterObjType,
-  dataStateType,
-  userDataType,
-  characterDataObjType,
-  hashArr,
-  SQLResponseArr,
-  SQLResponseItem,
-  hashObj,
-  singleCharacterType,
-} from "../CustomTypes";
-
-        // * doesn't take any arguments, if anything apikey
+        // * doesn't take any arguments
         // * gets and sets the auth token in localStorage
-        // * returns authConfirm boolean nothing
+        // * returns authConfirm boolean
         async function fetchAuthToken() {
           const urlParams = new URL(document.location.toString()).searchParams;
           const authCode = urlParams.get("code");
+          // console.log("🚀 ~ useEffect ~ authCode:", authCode)
+          
+          // exit if no auth code in the url
           if (!authCode) {
             return false;
           }
+
           try {
-            // console.log("🚀 ~ useEffect ~ authCode:", authCode)
-            // if (authCode) {
+            // set loading message
             document.getElementsByClassName("loadingMessage")[0].innerHTML =
               "Getting user authorisation.";
   
             const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
             history.pushState(null, "DiVA | Destiny Vault App", "/");
-            // try to get auth token
-  
+            
+            // try to get auth token from bungie
             const authTokenResponse = await fetch(
               "https://www.bungie.net/Platform/App/OAuth/Token/",
               {
@@ -44,19 +33,23 @@ import {
             );
   
             const authTokenResult = await authTokenResponse.json();
-  
+            // console.log("🚀 ~ fetchAuthToken ~ authTokenResult:", authTokenResult)
+            
+            // check that the response is not an error
             if (!authTokenResult.error) {
-              // document.getElementsByClassName("accessToken")[0].innerHTML =
-              //   `Access Token (Copy and put into localhost for url param): ${authTokenResult.access_token}`;
+              // store the token in local storage
               localStorage.setItem(
                 "localAuthToken",
                 JSON.stringify(authTokenResult),
-              );
-              document.getElementsByClassName("loadingMessage")[0].innerHTML =
+                );
+                // update loading message
+                document.getElementsByClassName("loadingMessage")[0].innerHTML =
                 "User authorised.";
+                
+                // return value
+                // console.log("🚀 ~ fetchAuthToken:", true)
               return true;
             }
-            // }
           } catch (error) {
             console.log("🚀 ~ fetchAuthToken ~ error:", error);
             return false

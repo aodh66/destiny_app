@@ -64,11 +64,8 @@ type singleCharacterType = {
   };
 };
 
-type dataStateType = [
-  // initialised: boolean;
-  singleCharacterType,
-  singleCharacterType,
-  singleCharacterType,
+type dataStateType = singleCharacterType[
+
 ];
 
 type userDataType = {
@@ -76,7 +73,7 @@ type userDataType = {
   membershipId: string;
 };
 
-type characterDataObjType = {
+type characterInfoObjType = {
   characterIds: string[];
   characterData: {
     [propType: string]: {
@@ -112,7 +109,7 @@ export {
   type dataStateType,
   type singleCharacterType,
   type userDataType,
-  type characterDataObjType,
+  type characterInfoObjType,
   type hashArr,
   type SQLResponseArr,
   type SQLResponseItem,

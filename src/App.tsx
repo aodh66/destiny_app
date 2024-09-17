@@ -11,18 +11,21 @@ import {
   characterObjType,
   dataStateType,
   userDataType,
-  characterDataObjType,
+  characterInfoObjType,
   hashArr,
   SQLResponseArr,
   SQLResponseItem,
   hashObj,
   singleCharacterType,
 } from "./CustomTypes";
+
 import Characters from "./components/Characters";
 
 import fetchAuthToken from "./functions/FetchAuthToken";
-
-// const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
+import fetchUserData from "./functions/FetchUserData";
+import fetchCharData from "./functions/FetchCharData";
+import initialiseCharData from "./functions/InitialiseCharData";
+import fetchAllCharInv from "./functions/FetchAllCharInv";
 
 function App() {
   const [loginState, setLoginState] = useState(false); // to track if it's logged in, and therefore whether the button is there
@@ -64,24 +67,46 @@ function App() {
   // * UseEffect that logs in the user and then gets their character inventories to set the data object
   useEffect(() => {
     async function getAllData() {
-      // Fetch auth token
-      // if params are in the url, fetch the auth token
-      // return true if the token was fetched
+      // * Fetch auth token
+        // if params are in the url, fetch the auth token and set it in local storage
+        // return 
+          // true if token fetched
+          // false if err
       const authConfirm = await fetchAuthToken();
       // console.log("🚀 ~ getAllData ~ fetchAuthToken ~ authConfirm:", authConfirm)
-
-
-
-
-
-
-
-
-
-
-
-
-
+      
+      // * Set the login state
+      async function setLoginStateFn(userDataObj: userDataType | boolean | undefined) {
+        if (userDataObj !== false && userDataObj !== undefined) {
+          setLoginState(true);
+        }
+      }
+      // * Set the login state to swap the button for placeholders
+      setLoginStateFn(authConfirm);
+      
+      // * Fetch user data (membershipType and membershipId)
+        // if authConfirm is true, fetch user data and return it
+        // return
+          // object with membershipType and membershipId
+          // undefined if err
+      const userData = await fetchUserData(authConfirm);
+      // console.log("🚀 ~ getAllData ~ fetchUserData ~ userData:", userData)
+      
+      // * Set the login state to update the placeholders with user data
+      setLoginStateFn(userData);
+      
+      // * Fetch character info
+      const characterInfo = await fetchCharData(userData);
+      // console.log("🚀 ~ getAllData ~ fetchCharData ~ characterInfo:", characterInfo)
+      
+      // * Initialise the big character data object
+      // if characterInfo is there, map over the object and add the appropriate number of char objects
+      // return
+        // initialisedData object
+        // undefined if err
+        const initialisedData = await initialiseCharData(characterInfo);
+        // console.log("🚀 ~ getAllData ~ initialiseCharData ~ initialisedData:", initialisedData)
+      
 
 
 
@@ -91,16 +116,10 @@ function App() {
 
 
       
-      const userData = await fetchUserData(authConfirm);
-      // console.log("🚀 ~ getAllData ~ fetchUserData ~ userData:", userData)
-      const characterData = await fetchCharData(userData);
-      // console.log("🚀 ~ getAllData ~ fetchCharData ~ characterData:", characterData)
-      const dataState = await initialiseCharData(characterData);
-      // console.log("🚀 ~ getAllData ~ initialiseCharData ~ dataState:", dataState)
-      const parseData = await fetchAllCharInv(dataState, userData);
-      // const parseData : dataStateType = await fetchAllCharInv(dataState, userData).then(setData(parseData));
-      console.log("🚀 ~ getAllData ~ fetchAllCharInv ~ parseData:", parseData);
-      // await setData(parseData);
+      // const parseData = await fetchAllCharInv(initialisedData, userData);
+      // // const parseData : dataStateType = await fetchAllCharInv(dataState, userData).then(setData(parseData));
+      // // console.log("🚀 ~ getAllData ~ fetchAllCharInv ~ parseData:", parseData);
+      // // await setData(parseData);
       
       
       //       for (const [key, value] of parseData[0].characterObj) {
@@ -116,355 +135,7 @@ function App() {
         
         
         // TODO abstract all of these functions into their own files
-      //   // * doesn't take any arguments, if anything apikey
-      //   // * gets and sets the auth token in localStorage
-      //   // * returns authConfirm boolean nothing
-      //   async function fetchAuthToken() {
-      //   const urlParams = new URL(document.location.toString()).searchParams;
-      //   const authCode = urlParams.get("code");
-      //   if (!authCode) {
-      //     return false;
-      //   }
-      //   try {
-      //     // console.log("🚀 ~ useEffect ~ authCode:", authCode)
-      //     // if (authCode) {
-      //     document.getElementsByClassName("loadingMessage")[0].innerHTML =
-      //       "Getting user authorisation.";
-
-      //     const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
-      //     history.pushState(null, "DiVA | Destiny Vault App", "/");
-      //     // try to get auth token
-
-      //     const authTokenResponse = await fetch(
-      //       "https://www.bungie.net/Platform/App/OAuth/Token/",
-      //       {
-      //         method: "POST",
-      //         headers: {
-      //           "Content-Type": "application/x-www-form-urlencoded",
-      //           "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
-      //         },
-      //         body: data,
-      //       },
-      //     );
-
-      //     const authTokenResult = await authTokenResponse.json();
-
-      //     if (!authTokenResult.error) {
-      //       // document.getElementsByClassName("accessToken")[0].innerHTML =
-      //       //   `Access Token (Copy and put into localhost for url param): ${authTokenResult.access_token}`;
-      //       localStorage.setItem(
-      //         "localAuthToken",
-      //         JSON.stringify(authTokenResult),
-      //       );
-      //       document.getElementsByClassName("loadingMessage")[0].innerHTML =
-      //         "User authorised.";
-      //       return true;
-      //     }
-      //     // }
-      //   } catch (error) {
-      //     console.log("🚀 ~ fetchAuthToken ~ error:", error);
-      //   }
-      // }
-
-      // * takes authConfirm if anything,
-      // * grabs api key from localstorage, gets the user data,
-      // * returns userData, object with the membershipType and membershipId (userprofileresult)
-      async function fetchUserData(authConfirm: boolean | undefined) {
-        if (!authConfirm) {
-          return undefined;
-        } else if (!localStorage.getItem("localAuthToken")) {
-          return undefined;
-        }
-        try {
-          // if (authConfirm) {
-          document.getElementsByClassName("loadingMessage")[0].innerHTML =
-            "Getting user data";
-          const userDataResponse = await fetch(
-            "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/",
-            {
-              method: "GET",
-              headers: {
-                "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
-                Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-              },
-              body: null,
-            },
-          );
-
-          setLoginState(true);
-          const userDataResult = await userDataResponse.json();
-          // console.log(
-          //   "🚀 ~ fetchAuthToken ~ userDataResult:",
-          //   userDataResult,
-          // );
-          document.getElementsByClassName("username")[0].innerHTML =
-            userDataResult.Response.uniqueName;
-          document
-            .getElementsByClassName("userIcon")[0]
-            .setAttribute(
-              "src",
-              `https://www.bungie.net${userDataResult.Response.profilePicturePath.replaceAll("'", "")}`,
-            );
-
-          if (userDataResult) {
-            // console.log("🚀 ~ fetchTotalInventory ~ loginState:", loginState)
-
-            // console.log(JSON.parse(localStorage.getItem("localAuthToken")!).access_token)
-            // fetch Membership type and ID
-            const userMembershipsResponse = await fetch(
-              "https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/",
-              {
-                method: "GET",
-                headers: {
-                  "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
-                  Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-                },
-                body: null,
-              },
-            );
-
-            const userMembershipsResult = await userMembershipsResponse.json();
-
-            const userData = {
-              membershipType:
-                userMembershipsResult.Response.destinyMemberships[0]
-                  .membershipType,
-              membershipId:
-                userMembershipsResult.Response.destinyMemberships[0]
-                  .membershipId,
-            };
-            // console.log("🚀 ~ useEffect ~ userData:", userData)
-
-            document.getElementsByClassName("loadingMessage")[0].innerHTML =
-              "User data received.";
-
-            return userData;
-          }
-          // }
-        } catch (error) {
-          console.log("🚀 ~ fetchUserData ~ error:", error);
-        }
-      }
-
-      // * takes userData, apikey
-      // * gets character data
-      // * returns characterData, with the char ids and basic info (userprofileresult2)
-      // type userDataType = {
-      //   membershipType: number;
-      //   membershipId: string;
-      // };
-      async function fetchCharData(userData: userDataType | undefined) {
-        if (!userData) {
-          return undefined;
-        }
-        try {
-          document.getElementsByClassName("loadingMessage")[0].innerHTML =
-            "Getting character data.";
-          const userProfileResponse = await fetch(
-            `https://www.bungie.net/Platform/Destiny2/${userData.membershipType}/Profile/${userData.membershipId}/?components=Profiles`,
-            {
-              method: "GET",
-              headers: {
-                "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
-                Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-              },
-            },
-          );
-
-          const userProfileResult = await userProfileResponse.json();
-
-          const characterIds =
-            userProfileResult.Response.profile.data.characterIds;
-          // console.log("🚀 ~ useEffect ~ characterIds:", characterIds)
-
-          // document.getElementsByClassName(
-          //   "characterIds",
-          // )[0].innerHTML =
-          //   `Character IDs: ${characterIds[0]}, ${characterIds[1]}, ${characterIds[2]}`;
-
-          const characterDataResponse2 = await fetch(
-            `https://www.bungie.net/Platform/Destiny2/${userData.membershipType}/Profile/${userData.membershipId}/?components=Characters`,
-            {
-              method: "GET",
-              headers: {
-                "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
-                Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
-              },
-            },
-          );
-
-          const characterData = await characterDataResponse2.json();
-          // console.log("🚀 ~ getAllData ~ characterData:", characterData.Response.characters.data)
-
-          const characterDataObj = {
-            characterIds: characterIds,
-            // JSON.stringify(characterData),
-            characterData: characterData.Response.characters.data,
-          };
-
-          document.getElementsByClassName("loadingMessage")[0].innerHTML =
-            "Character data received.";
-
-          return characterDataObj;
-        } catch (error) {
-          console.log("🚀 ~ fetchCharData ~ error:", error);
-        }
-      }
-
-      // * takes characterData
-      // * initialises the big data object, sets its values with the characterData stuff, sets the race and class, calls setData()
-      // * returns dataState
-      // type characterDataObjType = {
-      //   characterIds: string[];
-      //   characterData: {
-      //     [propType: string]: {
-      //       raceType: string;
-      //       raceHash: string;
-      //       classType: string;
-      //       classHash: string;
-      //       emblemBackgroundPath: string;
-      //     };
-      //   };
-      // };
-      async function initialiseCharData(
-        characterDataObj: characterDataObjType | undefined,
-        // characterData : characterData,
-        // characterIds : characterIdType,
-      ) {
-        // console.log("🚀 ~ getAllData ~ characterDataObj:", characterDataObj)
-
-        if (!characterDataObj) {
-          return undefined;
-        }
-        try {
-          // * Initialise big data object
-          // ! Could initialise an array, then push each thing into it, then make an actual dataStateType equal to it?
-          const dataState: dataStateType = [
-            {
-              characterId: `${characterDataObj.characterIds[0]}`,
-              raceType: `${characterDataObj.characterData[characterDataObj.characterIds[0]].raceType}`,
-              raceHash: `${characterDataObj.characterData[characterDataObj.characterIds[0]].raceHash}`,
-              classType: `${characterDataObj.characterData[characterDataObj.characterIds[0]].classType}`,
-              classHash: `${characterDataObj.characterData[characterDataObj.characterIds[0]].classHash}`,
-              race: "",
-              class: "",
-              emblemBackgroundPath: `${characterDataObj.characterData[characterDataObj.characterIds[0]].emblemBackgroundPath}`,
-              characterObj: {
-                kineticWeapons: [] as itemArrayType,
-                energyWeapons: [] as itemArrayType,
-                heavyWeapons: [] as itemArrayType,
-                helmet: [] as itemArrayType,
-                arms: [] as itemArrayType,
-                chest: [] as itemArrayType,
-                legs: [] as itemArrayType,
-                classItem: [] as itemArrayType,
-                ghost: [] as itemArrayType,
-                // banner: [] as itemArrayType,
-                emblem: [] as itemArrayType,
-                ship: [] as itemArrayType,
-                sparrow: [] as itemArrayType,
-                // emotes: [] as itemArrayType,
-                // inventory: [] as itemArrayType,
-                subclass: [] as itemArrayType,
-              },
-            },
-            {
-              characterId: `${characterDataObj.characterIds[1]}`,
-              raceType: `${characterDataObj.characterData[characterDataObj.characterIds[1]].raceType}`,
-              raceHash: `${characterDataObj.characterData[characterDataObj.characterIds[1]].raceHash}`,
-              classType: `${characterDataObj.characterData[characterDataObj.characterIds[1]].classType}`,
-              classHash: `${characterDataObj.characterData[characterDataObj.characterIds[1]].classHash}`,
-              race: "",
-              class: "",
-              emblemBackgroundPath: `${characterDataObj.characterData[characterDataObj.characterIds[1]].emblemBackgroundPath}`,
-              characterObj: {
-                kineticWeapons: [] as itemArrayType,
-                energyWeapons: [] as itemArrayType,
-                heavyWeapons: [] as itemArrayType,
-                helmet: [] as itemArrayType,
-                arms: [] as itemArrayType,
-                chest: [] as itemArrayType,
-                legs: [] as itemArrayType,
-                classItem: [] as itemArrayType,
-                ghost: [] as itemArrayType,
-                // banner: [] as itemArrayType,
-                emblem: [] as itemArrayType,
-                ship: [] as itemArrayType,
-                sparrow: [] as itemArrayType,
-                // emotes: [] as itemArrayType,
-                // inventory: [] as itemArrayType,
-                subclass: [] as itemArrayType,
-              },
-            },
-            {
-              characterId: `${characterDataObj.characterIds[2]}`,
-              raceType: `${characterDataObj.characterData[characterDataObj.characterIds[2]].raceType}`,
-              raceHash: `${characterDataObj.characterData[characterDataObj.characterIds[2]].raceHash}`,
-              classType: `${characterDataObj.characterData[characterDataObj.characterIds[2]].classType}`,
-              classHash: `${characterDataObj.characterData[characterDataObj.characterIds[2]].classHash}`,
-              race: "",
-              class: "",
-              emblemBackgroundPath: `${characterDataObj.characterData[characterDataObj.characterIds[2]].emblemBackgroundPath}`,
-              characterObj: {
-                kineticWeapons: [] as itemArrayType,
-                energyWeapons: [] as itemArrayType,
-                heavyWeapons: [] as itemArrayType,
-                helmet: [] as itemArrayType,
-                arms: [] as itemArrayType,
-                chest: [] as itemArrayType,
-                legs: [] as itemArrayType,
-                classItem: [] as itemArrayType,
-                ghost: [] as itemArrayType,
-                // banner: [] as itemArrayType,
-                emblem: [] as itemArrayType,
-                ship: [] as itemArrayType,
-                sparrow: [] as itemArrayType,
-                // emotes: [] as itemArrayType,
-                // inventory: [] as itemArrayType,
-                subclass: [] as itemArrayType,
-              },
-            },
-          ];
-          // console.log("🚀 ~ fetchAuthToken ~ dataState just declared:", dataState)
-
-          // * Set character classes and races
-          dataState.map((element) => {
-            // console.log("🚀 ~ dataState.map ~ element:", element)
-            // console.log("🚀 ~ dataState.map ~ index:", index)
-            const raceDict = {
-              Human: "0",
-              Awoken: "1",
-              Exo: "2",
-            };
-            const classDict = {
-              Titan: "0",
-              Hunter: "1",
-              Warlock: "2",
-            };
-            for (const [key, value] of Object.entries(raceDict)) {
-              if (value === element.raceType) {
-                element.race = key;
-              }
-            }
-            for (const [key, value] of Object.entries(classDict)) {
-              if (value === element.classType) {
-                element.class = key;
-              }
-            }
-          });
-
-          document.getElementsByClassName("loadingMessage")[0].innerHTML =
-            "Character data initialised.";
-
-          // console.log("first setData", data)
-          // setData(dataState);
-          return dataState;
-        } catch (error) {
-          console.log("🚀 ~ initialiseCharData ~ error:", error);
-        }
-      }
-
-      // * takes dataState and index of dataState as charNum
+      // * takes initialisedData and index of initialisedData as charNum
       // * gets the character inventory data (equipped and unequippied) and puts it in charInv, calls parseCharInv to set it on the big data obj, calls setData()
       // * returns dataState as parseData
       async function fetchAllCharInv(

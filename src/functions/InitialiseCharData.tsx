@@ -4,7 +4,7 @@ import {
   characterObjType,
   dataStateType,
   userDataType,
-  characterDataObjType,
+  characterInfoObjType,
   hashArr,
   SQLResponseArr,
   SQLResponseItem,
@@ -12,136 +12,72 @@ import {
   singleCharacterType,
 } from "../CustomTypes";
 
-// * takes characterData
-      // * initialises the big data object, sets its values with the characterData stuff, sets the race and class, calls setData()
-      // * returns dataState
-    //   type characterDataObjType = {
-    //     characterIds: string[];
-    //     characterData: {
-    //       [propType: string]: {
-    //         raceType: string;
-    //         raceHash: string;
-    //         classType: string;
-    //         classHash: string;
-    //         emblemBackgroundPath: string;
-    //       };
-    //     };
-    //   };
+      // * takes characterInfo
+      // * initialises the big data object, sets its values with the characterInfo stuff, sets the race and class
+      // * returns initialisedData
       async function initialiseCharData(
-        characterDataObj: characterDataObjType | undefined,
-        // characterData : characterData,
-        // characterIds : characterIdType,
+        characterInfoObj: characterInfoObjType | undefined,
       ) {
-        // console.log("🚀 ~ getAllData ~ characterDataObj:", characterDataObj)
+        // console.log("🚀 ~ getAllData ~ characterInfoObj:", characterInfoObj)
 
-        if (!characterDataObj) {
+        // exit if characterInfoObj is undefined
+        if (!characterInfoObj) {
           return undefined;
         }
+        
         try {
-          // * Initialise big data object
+          // Initialise big data object
           // ! Could initialise an array, then push each thing into it, then make an actual dataStateType equal to it?
-          const dataState: dataStateType = [
-            {
-              characterId: `${characterDataObj.characterIds[0]}`,
-              raceType: `${characterDataObj.characterData[characterDataObj.characterIds[0]].raceType}`,
-              raceHash: `${characterDataObj.characterData[characterDataObj.characterIds[0]].raceHash}`,
-              classType: `${characterDataObj.characterData[characterDataObj.characterIds[0]].classType}`,
-              classHash: `${characterDataObj.characterData[characterDataObj.characterIds[0]].classHash}`,
-              race: "",
-              class: "",
-              emblemBackgroundPath: `${characterDataObj.characterData[characterDataObj.characterIds[0]].emblemBackgroundPath}`,
-              characterObj: {
-                kineticWeapons: [] as itemArrayType,
-                energyWeapons: [] as itemArrayType,
-                heavyWeapons: [] as itemArrayType,
-                helmet: [] as itemArrayType,
-                arms: [] as itemArrayType,
-                chest: [] as itemArrayType,
-                legs: [] as itemArrayType,
-                classItem: [] as itemArrayType,
-                ghost: [] as itemArrayType,
-                // banner: [] as itemArrayType,
-                emblem: [] as itemArrayType,
-                ship: [] as itemArrayType,
-                sparrow: [] as itemArrayType,
-                // emotes: [] as itemArrayType,
-                // inventory: [] as itemArrayType,
-                subclass: [] as itemArrayType,
-              },
-            },
-            {
-              characterId: `${characterDataObj.characterIds[1]}`,
-              raceType: `${characterDataObj.characterData[characterDataObj.characterIds[1]].raceType}`,
-              raceHash: `${characterDataObj.characterData[characterDataObj.characterIds[1]].raceHash}`,
-              classType: `${characterDataObj.characterData[characterDataObj.characterIds[1]].classType}`,
-              classHash: `${characterDataObj.characterData[characterDataObj.characterIds[1]].classHash}`,
-              race: "",
-              class: "",
-              emblemBackgroundPath: `${characterDataObj.characterData[characterDataObj.characterIds[1]].emblemBackgroundPath}`,
-              characterObj: {
-                kineticWeapons: [] as itemArrayType,
-                energyWeapons: [] as itemArrayType,
-                heavyWeapons: [] as itemArrayType,
-                helmet: [] as itemArrayType,
-                arms: [] as itemArrayType,
-                chest: [] as itemArrayType,
-                legs: [] as itemArrayType,
-                classItem: [] as itemArrayType,
-                ghost: [] as itemArrayType,
-                // banner: [] as itemArrayType,
-                emblem: [] as itemArrayType,
-                ship: [] as itemArrayType,
-                sparrow: [] as itemArrayType,
-                // emotes: [] as itemArrayType,
-                // inventory: [] as itemArrayType,
-                subclass: [] as itemArrayType,
-              },
-            },
-            {
-              characterId: `${characterDataObj.characterIds[2]}`,
-              raceType: `${characterDataObj.characterData[characterDataObj.characterIds[2]].raceType}`,
-              raceHash: `${characterDataObj.characterData[characterDataObj.characterIds[2]].raceHash}`,
-              classType: `${characterDataObj.characterData[characterDataObj.characterIds[2]].classType}`,
-              classHash: `${characterDataObj.characterData[characterDataObj.characterIds[2]].classHash}`,
-              race: "",
-              class: "",
-              emblemBackgroundPath: `${characterDataObj.characterData[characterDataObj.characterIds[2]].emblemBackgroundPath}`,
-              characterObj: {
-                kineticWeapons: [] as itemArrayType,
-                energyWeapons: [] as itemArrayType,
-                heavyWeapons: [] as itemArrayType,
-                helmet: [] as itemArrayType,
-                arms: [] as itemArrayType,
-                chest: [] as itemArrayType,
-                legs: [] as itemArrayType,
-                classItem: [] as itemArrayType,
-                ghost: [] as itemArrayType,
-                // banner: [] as itemArrayType,
-                emblem: [] as itemArrayType,
-                ship: [] as itemArrayType,
-                sparrow: [] as itemArrayType,
-                // emotes: [] as itemArrayType,
-                // inventory: [] as itemArrayType,
-                subclass: [] as itemArrayType,
-              },
-            },
-          ];
-          // console.log("🚀 ~ fetchAuthToken ~ dataState just declared:", dataState)
+          // Initialise array
+          const initialisedData: dataStateType = [];
 
-          // * Set character classes and races
-          dataState.map((element) => {
-            // console.log("🚀 ~ dataState.map ~ element:", element)
-            // console.log("🚀 ~ dataState.map ~ index:", index)
-            const raceDict = {
-              Human: "0",
-              Awoken: "1",
-              Exo: "2",
-            };
-            const classDict = {
-              Titan: "0",
-              Hunter: "1",
-              Warlock: "2",
-            };
+          // Push a character into the array for every one in characterIds
+          characterInfoObj.characterIds.forEach((element, index) => {
+            element;
+            initialisedData.push(
+              {
+                characterId: `${characterInfoObj.characterIds[index]}`,
+                raceType: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].raceType}`,
+                raceHash: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].raceHash}`,
+                classType: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].classType}`,
+                classHash: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].classHash}`,
+                race: "",
+                class: "",
+                emblemBackgroundPath: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].emblemBackgroundPath}`,
+                characterObj: {
+                  kineticWeapons: [] as itemArrayType,
+                  energyWeapons: [] as itemArrayType,
+                  heavyWeapons: [] as itemArrayType,
+                  helmet: [] as itemArrayType,
+                  arms: [] as itemArrayType,
+                  chest: [] as itemArrayType,
+                  legs: [] as itemArrayType,
+                  classItem: [] as itemArrayType,
+                  ghost: [] as itemArrayType,
+                  // banner: [] as itemArrayType,
+                  emblem: [] as itemArrayType,
+                  ship: [] as itemArrayType,
+                  sparrow: [] as itemArrayType,
+                  // emotes: [] as itemArrayType,
+                  // inventory: [] as itemArrayType,
+                  subclass: [] as itemArrayType,
+                },
+              }
+            )
+          })
+
+          //  Set character classes and races
+          const raceDict = {
+            Human: "0",
+            Awoken: "1",
+            Exo: "2",
+          };
+          const classDict = {
+            Titan: "0",
+            Hunter: "1",
+            Warlock: "2",
+          };
+          initialisedData.map((element) => {
             for (const [key, value] of Object.entries(raceDict)) {
               if (value === element.raceType) {
                 element.race = key;
@@ -154,12 +90,12 @@ import {
             }
           });
 
+          // update loading message
           document.getElementsByClassName("loadingMessage")[0].innerHTML =
             "Character data initialised.";
 
-          // console.log("first setData", data)
-          // setData(dataState);
-          return dataState;
+          console.log("🚀 ~ initialisedData:", initialisedData)
+          return initialisedData;
         } catch (error) {
           console.log("🚀 ~ initialiseCharData ~ error:", error);
         }
