@@ -13,20 +13,22 @@ const ItemCard = (item: itemObjType) => {
   }
   // console.log("🚀 ~ ItemCard ~ item:", item)
   return (
-    <div className="item" key={item.hash}>
-      <img
-        className="itemIcon"
-        src={`https://www.bungie.net${item.icon}`}
-        alt="item icon"
-      />
-      <div className="itemInfo">
+    <div className={`item ${item.equipped}`} key={item.hash}>
+      <div className="iconBox" title={`${item.name} - ${item.rarity + " " + item.itemType}`}>
+        <img
+          className="itemIcon"
+          src={`https://www.bungie.net${item.icon}`}
+          alt="item icon"
+        />
+        <p className="itemInstance">{item.instance}</p>
+      </div>
+      {/* <div className="itemInfo">
         <p className="itemName">{item.name}</p>
         <p className="itemRarity itemType">
           {item.rarity + " " + item.itemType}
         </p>
         <p className="itemFlavourText">{item.flavorText}</p>
-      </div>
-      {/* <p>{JSON.stringify(item)}</p> */}
+      </div> */}
     </div>
   );
 };

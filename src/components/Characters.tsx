@@ -27,17 +27,22 @@ const Characters = ({ data }: propType) => {
     <>
       {data &&
         data.map((char) => {
+          // if (!char) {
+          //   console.log(`Character component has undefined data`);
+          //   return <></>;
+          // }
           return (
             <div className="character" key={char.characterId}>
               <div className="charHead">
-                {char.characterObj.subclass[0].icon && (
+                {char.characterObj.subclass[0].icon ? (
                   <img
                     className="charIcon"
                     src={`https://www.bungie.net${char.characterObj.subclass[0].icon}`}
                     alt="character subclass icon"
                   />
+                ) : (
+                  <></>
                 )}
-                {/* {data[0].characterObj.subclass[0]?.icon && <img src={`https://www.bungie.net/common/destiny2_content/icons/41c0024ce809085ac16f4e0777ea0ac4.png`} alt="character subclass icon"/>} */}
                 <h2 className="charTitle">{char.race + " " + char.class}</h2>
               </div>
 

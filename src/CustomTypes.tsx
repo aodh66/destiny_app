@@ -1,7 +1,7 @@
 type itemObjType = {
   hash: number;
   bucketHash: number;
-  tableId: string;
+  tableId: number;
   name: string;
   icon: string;
   flavorText: string;
@@ -9,8 +9,12 @@ type itemObjType = {
   itemType: string;
   bucket: string;
   equipped: boolean;
+  instance: number;
+  itemInstanceId: number;
 };
+
 type itemArrayType = itemObjType[];
+
 type characterObjType = {
   kineticWeapons: itemArrayType;
   energyWeapons: itemArrayType;
@@ -29,6 +33,7 @@ type characterObjType = {
   // inventory: itemArrayType;
   subclass: itemArrayType;
 };
+
 // type itemArrayType = [itemObjType];
 type singleCharacterType = {
   characterId: string;
@@ -40,31 +45,65 @@ type singleCharacterType = {
   class: string;
   emblemBackgroundPath: string;
   characterObj: {
-    kineticWeapons: itemArrayType;
-    energyWeapons: itemArrayType;
-    heavyWeapons: itemArrayType;
-    helmet: itemArrayType;
-    arms: itemArrayType;
-    chest: itemArrayType;
-    legs: itemArrayType;
-    classItem: itemArrayType;
-    ghost: itemArrayType;
+    "kineticWeapons": itemArrayType;
+    "energyWeapons": itemArrayType;
+    "heavyWeapons": itemArrayType;
+    "helmet": itemArrayType;
+    "arms": itemArrayType;
+    "chest": itemArrayType;
+    "legs": itemArrayType;
+    "classItem": itemArrayType;
+    "ghost": itemArrayType;
     // banner: itemArrayType;
-    emblem: itemArrayType;
-    ship: itemArrayType;
-    sparrow: itemArrayType;
+    "emblem": itemArrayType;
+    "ship": itemArrayType;
+    "sparrow": itemArrayType;
     // emotes: itemArrayType;
     // inventory: itemArrayType;
-    subclass: itemArrayType;
+    "subclass": itemArrayType;
   };
 };
+
 type dataStateType = [
   // initialised: boolean;
   singleCharacterType,
   singleCharacterType,
   singleCharacterType,
 ];
-//  | undefined;
+
+type userDataType = {
+  membershipType: number;
+  membershipId: string;
+};
+
+type characterDataObjType = {
+  characterIds: string[];
+  characterData: {
+    [propType: string]: {
+      raceType: string;
+      raceHash: string;
+      classType: string;
+      classHash: string;
+      emblemBackgroundPath: string;
+    };
+  };
+};
+
+type hashObj = {
+    itemHash: number;
+    bucketHash: number;
+    itemInstanceId: number;
+  }
+
+
+type hashArr = hashObj[];
+
+type SQLResponseItem = {
+    id: number;
+    json: string;
+  }
+
+type SQLResponseArr = SQLResponseItem[]
 
 export {
   type itemObjType,
@@ -72,4 +111,10 @@ export {
   type characterObjType,
   type dataStateType,
   type singleCharacterType,
+  type userDataType,
+  type characterDataObjType,
+  type hashArr,
+  type SQLResponseArr,
+  type SQLResponseItem,
+  type hashObj,
 };

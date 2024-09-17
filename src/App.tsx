@@ -10,9 +10,17 @@ import {
   itemArrayType,
   characterObjType,
   dataStateType,
-  // singleCharacterType,
+  userDataType,
+  characterDataObjType,
+  hashArr,
+  SQLResponseArr,
+  SQLResponseItem,
+  hashObj,
+  singleCharacterType,
 } from "./CustomTypes";
 import Characters from "./components/Characters";
+
+import fetchAuthToken from "./functions/FetchAuthToken";
 
 // const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
 
@@ -56,12 +64,33 @@ function App() {
   // * UseEffect that logs in the user and then gets their character inventories to set the data object
   useEffect(() => {
     async function getAllData() {
-      const apiKey = `${import.meta.env.VITE_BUNGIE_API_KEY}`;
-      const urlParams = new URL(document.location.toString()).searchParams;
-      const authCode = urlParams.get("code");
-
+      // Fetch auth token
+      // if params are in the url, fetch the auth token
+      // return true if the token was fetched
       const authConfirm = await fetchAuthToken();
       // console.log("🚀 ~ getAllData ~ fetchAuthToken ~ authConfirm:", authConfirm)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
       const userData = await fetchUserData(authConfirm);
       // console.log("🚀 ~ getAllData ~ fetchUserData ~ userData:", userData)
       const characterData = await fetchCharData(userData);
@@ -69,61 +98,73 @@ function App() {
       const dataState = await initialiseCharData(characterData);
       // console.log("🚀 ~ getAllData ~ initialiseCharData ~ dataState:", dataState)
       const parseData = await fetchAllCharInv(dataState, userData);
+      // const parseData : dataStateType = await fetchAllCharInv(dataState, userData).then(setData(parseData));
       console.log("🚀 ~ getAllData ~ fetchAllCharInv ~ parseData:", parseData);
-
+      // await setData(parseData);
+      
+      
       //       for (const [key, value] of parseData[0].characterObj) {
-      //         console.log(`${key}: ${value}`);
+        //         console.log(`${key}: ${value}`);
+        // }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        // TODO abstract all of these functions into their own files
+      //   // * doesn't take any arguments, if anything apikey
+      //   // * gets and sets the auth token in localStorage
+      //   // * returns authConfirm boolean nothing
+      //   async function fetchAuthToken() {
+      //   const urlParams = new URL(document.location.toString()).searchParams;
+      //   const authCode = urlParams.get("code");
+      //   if (!authCode) {
+      //     return false;
+      //   }
+      //   try {
+      //     // console.log("🚀 ~ useEffect ~ authCode:", authCode)
+      //     // if (authCode) {
+      //     document.getElementsByClassName("loadingMessage")[0].innerHTML =
+      //       "Getting user authorisation.";
+
+      //     const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
+      //     history.pushState(null, "DiVA | Destiny Vault App", "/");
+      //     // try to get auth token
+
+      //     const authTokenResponse = await fetch(
+      //       "https://www.bungie.net/Platform/App/OAuth/Token/",
+      //       {
+      //         method: "POST",
+      //         headers: {
+      //           "Content-Type": "application/x-www-form-urlencoded",
+      //           "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
+      //         },
+      //         body: data,
+      //       },
+      //     );
+
+      //     const authTokenResult = await authTokenResponse.json();
+
+      //     if (!authTokenResult.error) {
+      //       // document.getElementsByClassName("accessToken")[0].innerHTML =
+      //       //   `Access Token (Copy and put into localhost for url param): ${authTokenResult.access_token}`;
+      //       localStorage.setItem(
+      //         "localAuthToken",
+      //         JSON.stringify(authTokenResult),
+      //       );
+      //       document.getElementsByClassName("loadingMessage")[0].innerHTML =
+      //         "User authorised.";
+      //       return true;
+      //     }
+      //     // }
+      //   } catch (error) {
+      //     console.log("🚀 ~ fetchAuthToken ~ error:", error);
+      //   }
       // }
-
-      // * doesn't take any arguments, if anything apikey
-      // * gets and sets the auth token in localStorage
-      // * returns authConfirm boolean nothing
-      async function fetchAuthToken() {
-      // urlParams : string,
-      // authCode : string,
-        if (!authCode) {
-          return false;
-        }
-        try {
-          // console.log("🚀 ~ useEffect ~ authCode:", authCode)
-          // if (authCode) {
-          document.getElementsByClassName("loadingMessage")[0].innerHTML =
-            "Getting user authorisation.";
-
-          const data = `client_id=${import.meta.env.VITE_OAUTH_CLIENT_ID}&grant_type=authorization_code&code=${authCode}`;
-          history.pushState(null, "DiVA | Destiny Vault App", "/");
-          // try to get auth token
-
-          const authTokenResponse = await fetch(
-            "https://www.bungie.net/Platform/App/OAuth/Token/",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "X-API-Key": apiKey,
-              },
-              body: data,
-            },
-          );
-
-          const authTokenResult = await authTokenResponse.json();
-
-          if (!authTokenResult.error) {
-            // document.getElementsByClassName("accessToken")[0].innerHTML =
-            //   `Access Token (Copy and put into localhost for url param): ${authTokenResult.access_token}`;
-            localStorage.setItem(
-              "localAuthToken",
-              JSON.stringify(authTokenResult),
-            );
-            document.getElementsByClassName("loadingMessage")[0].innerHTML =
-              "User authorised.";
-            return true;
-          }
-          // }
-        } catch (error) {
-          console.log("🚀 ~ fetchAuthToken ~ error:", error);
-        }
-      }
 
       // * takes authConfirm if anything,
       // * grabs api key from localstorage, gets the user data,
@@ -143,7 +184,7 @@ function App() {
             {
               method: "GET",
               headers: {
-                "X-API-Key": apiKey,
+                "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
               },
               body: null,
@@ -175,7 +216,7 @@ function App() {
               {
                 method: "GET",
                 headers: {
-                  "X-API-Key": apiKey,
+                  "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
                   Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
                 },
                 body: null,
@@ -208,10 +249,10 @@ function App() {
       // * takes userData, apikey
       // * gets character data
       // * returns characterData, with the char ids and basic info (userprofileresult2)
-      type userDataType = {
-        membershipType: number;
-        membershipId: string;
-      };
+      // type userDataType = {
+      //   membershipType: number;
+      //   membershipId: string;
+      // };
       async function fetchCharData(userData: userDataType | undefined) {
         if (!userData) {
           return undefined;
@@ -224,7 +265,7 @@ function App() {
             {
               method: "GET",
               headers: {
-                "X-API-Key": apiKey,
+                "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
               },
             },
@@ -246,7 +287,7 @@ function App() {
             {
               method: "GET",
               headers: {
-                "X-API-Key": apiKey,
+                "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
               },
             },
@@ -273,19 +314,18 @@ function App() {
       // * takes characterData
       // * initialises the big data object, sets its values with the characterData stuff, sets the race and class, calls setData()
       // * returns dataState
-      // ! type structure here
-      type characterDataObjType = {
-        characterIds: string[];
-        characterData: {
-          [propType: string]: {
-            raceType: string;
-            raceHash: string;
-            classType: string;
-            classHash: string;
-            emblemBackgroundPath: string;
-          };
-        };
-      };
+      // type characterDataObjType = {
+      //   characterIds: string[];
+      //   characterData: {
+      //     [propType: string]: {
+      //       raceType: string;
+      //       raceHash: string;
+      //       classType: string;
+      //       classHash: string;
+      //       emblemBackgroundPath: string;
+      //     };
+      //   };
+      // };
       async function initialiseCharData(
         characterDataObj: characterDataObjType | undefined,
         // characterData : characterData,
@@ -451,6 +491,7 @@ function App() {
         } catch (error) {
           console.log("🚀 ~ getAllData ~ error:", error);
         }
+          return preBucketData;
       }
 
       // * takes dataState and index of dataState as charNum
@@ -461,6 +502,7 @@ function App() {
         userData: userDataType | undefined,
         charNum: number | undefined,
       ) {
+        // console.log("🚀 ~ getAllData ~ userData:", userData)
         if (!preBucketData) {
           return undefined;
         } else if (!userData) {
@@ -476,7 +518,7 @@ function App() {
             {
               method: "GET",
               headers: {
-                "X-API-Key": apiKey,
+                "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
               },
             },
@@ -517,7 +559,10 @@ function App() {
               "All characters parsed.";
             document.getElementsByClassName(
               "loadingMessage",
-            )[0].classList.value = "transparent";
+            )[0].classList.add("transparent");
+            // document.getElementsByClassName(
+            //   "loadingMessage",
+            // )[0].classList.value = "loadingMessage transparent";
             setData(parseData);
           }
 
@@ -531,12 +576,12 @@ function App() {
       // * takes charInv.equipment.data.items as hashArr, dataState, charNum and equipBool (could kill equipbool so it does equipped items first and sets their equip satus to true)
       // * calls SQL server to get parsed item info, sets it into individual items, pushes that into the correct arrays on dataState, calls setData()
       // * returns dataState as parseData
-      type hashArr = [
-        {
-          itemHash: number;
-          bucketHash: number;
-        },
-      ];
+      // type hashArr = [
+      //   {
+      //     itemHash: number;
+      //     bucketHash: number;
+      //   },
+      // ];
       async function parseCharInv(
         hashArray: hashArr,
         equipBool: boolean,
@@ -549,35 +594,108 @@ function App() {
         const db = new Database(
           `${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`,
         );
+
+
+
+        
+        
+        
         try {
-          for (const id of hashArray) {
+        function queryString(manifestTable : string, hashArray : hashArr) {
+          manifestTable;
+          let itemQuery = `USE DATABASE Manifest.sqlite;`
+          hashArray.forEach((item) => {
+          itemQuery = itemQuery.concat(' ', `SELECT * FROM ${`DestinyInventoryItemDefinition`} WHERE id + 4294967296 = ${item.itemHash} OR id = ${item.itemHash}
+          UNION`)
+          })
+          itemQuery = itemQuery.slice(0,-8).concat('', ';')
+          
+          let bucketQuery = `USE DATABASE Manifest.sqlite;`
+          hashArray.forEach((item) => {
+          bucketQuery = bucketQuery.concat(' ', `SELECT * FROM ${`DestinyInventoryBucketDefinition`} WHERE id + 4294967296 = ${item.bucketHash} OR id = ${item.bucketHash}
+          UNION`)
+          })
+          bucketQuery = bucketQuery.slice(0,-8).concat('', ';')
+          
+          const queryObj = {
+            itemQuery: itemQuery,
+            bucketQuery: bucketQuery,
+          }
+          
+          return queryObj;
+        }
+      
+        const dbQueryObj = queryString("DestinyInventoryItemDefinition", hashArray);
+        // console.log("🚀 ~ getAllData ~ dbQueryObj:", dbQueryObj)
+      
+
+                    const itemResult = await db.sql(dbQueryObj.itemQuery);
+                    // console.log("🚀 ~ getAllData ~ itemResult:", itemResult)
+                    const bucketResult = await db.sql(dbQueryObj.bucketQuery);
+                    // console.log("🚀 ~ getAllData ~ resultBucket:", bucketResult)
+      
+                    // const itemResultJson = JSON.parse(itemResult[0].json);
+                    // console.log("🚀 ~ getAllData ~ itemResultJson:", itemResultJson)
+      
+                    // itemResult[index].id is the hash or the hash + 4294967296 to let you find the right one
+                    // itemResult[index].json is the actual object with all of the data on the bucket or item
+
+//  TODO: FIX THIS SHIT
+        const postParseData = await iterateData(hashArray, itemResult, bucketResult);
+        console.log("🚀 ~ getAllData ~ postParseData:", postParseData)
+          // setData(postParseData);
+
+
+async function iterateData(hashArray : hashArr, itemRes : SQLResponseArr, bucketRes : SQLResponseArr) {
+          // console.log("🚀 ~ iterateData ~ bucketRes:", bucketRes)
+          // console.log("🚀 ~ iterateData ~ itemRes:", itemRes)
+
+
+          
+          // // console.log("🚀 ~ iterateData ~ itemRes:", itemRes[0].id)
+          // console.log("🚀 ~ iterateData ~ itemRes:", itemRes[0])
+          // const test = itemRes.findIndex((element : SQLResponseItem) => element.id === 2255073244 || element.id + 4294967296 === 2255073244);
+          // // const test = itemRes.forEach((element : SQLResponseItem) => {console.log("element", element.id)});
+          // console.log("🚀 ~ iterateData ~ itemResTEST:", test)
+
+
+
+          
+  for (const id of hashArray) {
+            let itemIndex = await itemRes.findIndex((element : SQLResponseItem) => element.id === id.itemHash || element.id + 4294967296 === id.itemHash);
+            // console.log("🚀 ~ iterateData ~ itemIndex:", itemIndex)
+            let bucketIndex = await bucketRes.findIndex((element : SQLResponseItem) => element.id === id.bucketHash || element.id + 4294967296 === id.bucketHash);
+            // console.log("🚀 ~ iterateData ~ bucketIndex:", bucketIndex)
+
             // Get item info
-            const result = await db.sql`
-USE DATABASE Manifest.sqlite;
-SELECT * FROM DestinyInventoryItemDefinition WHERE id + 4294967296 = ${id.itemHash} OR id = ${id.itemHash};`;
-            // console.log("🚀 ~ hashArray.forEach ~ result:", result)
-            const resultJson = JSON.parse(result[0].json);
-            // console.log("🚀 ~ useEffect ~ resultJson:", resultJson)
+//             const itemRes = await db.sql`
+// USE DATABASE Manifest.sqlite;
+// SELECT * FROM DestinyInventoryItemDefinition WHERE id + 4294967296 = ${id.itemHash} OR id = ${id.itemHash};`;
+            // console.log("🚀 ~ hashArray.forEach ~ itemRes:", itemRes[itemIndex])
+            const itemResJson = JSON.parse(itemRes[itemIndex].json);
+            // console.log("🚀 ~ useEffect ~ itemResJson:", itemResJson)
 
             // Get bucket name
-            const bucketResult = await db.sql`
-USE DATABASE Manifest.sqlite;
-SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.bucketHash} OR id = ${id.bucketHash};`;
-            // console.log("🚀 ~ useEffect ~ bucketResult :", bucketResult )
-            const bucketResultJson = JSON.parse(bucketResult[0].json);
-            // console.log("🚀 ~ useEffect ~ bucketResultJson:", bucketResultJson)
+//             const bucketRes = await db.sql`
+// USE DATABASE Manifest.sqlite;
+// SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.bucketHash} OR id = ${id.bucketHash};`;
+            // console.log("🚀 ~ useEffect ~ bucketRes :", bucketRes )
+            const bucketResJson = JSON.parse(bucketRes[bucketIndex].json);
+            // console.log("🚀 ~ useEffect ~ bucketResJson:", bucketResJson)
 
             const itemObj: itemObjType = {
               hash: id.itemHash,
               bucketHash: id.bucketHash,
-              tableId: result[0].id,
-              name: resultJson.displayProperties.name,
-              icon: resultJson.displayProperties.icon,
-              flavorText: resultJson.flavorText,
-              rarity: resultJson.inventory.tierTypeName,
-              itemType: resultJson.itemTypeDisplayName,
-              bucket: bucketResultJson.displayProperties.name,
+              tableId: itemRes[itemIndex].id,
+              name: itemResJson.displayProperties.name,
+              icon: itemResJson.displayProperties.icon,
+              flavorText: itemResJson.flavorText,
+              rarity: itemResJson.inventory.tierTypeName,
+              itemType: itemResJson.itemTypeDisplayName,
+              bucket: bucketResJson.displayProperties.name,
               equipped: equipBool,
+              instance: 0,
+              itemInstanceId: id.itemInstanceId,
             };
             // console.log("🚀 ~ useEffect ~ itemObj:", itemObj)
             const bucketSelect = {
@@ -598,18 +716,51 @@ SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.buck
               // "inventory": "",
               subclass: "Subclass",
               // "finishers": "Finishers",
-            };
-
+            }; 
+            
             for (const [key, value] of Object.entries(bucketSelect)) {
               // console.log(`key: ${key}, value: ${value}`);
               if (itemObj.bucket === value) {
                 key;
+                // The hasharray is an array of objects, each with an itemhash and buckethash, so we just look through the array and compare the entries to the 
+                let instance = 0;
+                if (key === "kineticWeapons" || key === "energyWeapons" || key === "heavyWeapons" || key === "ghost" || key === "ship" || key === "sparrow") {
+                  preParseData.forEach(char => {
+                    char.characterObj[key as keyof characterObjType].forEach(element => {
+                      if (element.hash === itemObj.hash) {
+                        instance++;
+                      }
+                    });
+                  })
+                  // TODO iterate over the vault to increase the instance count
+                } else {
+                  preParseData[charNum].characterObj[key as keyof characterObjType].forEach(element => {
+                    if (element.hash === itemObj.hash) {
+                      instance++;
+                    }
+                    // TODO iterate over the vault to increase the instance count
+                  });
+                }
+                itemObj.instance = instance;
+
+                // console.log("🚀 ~ getAllData ~ preParseData[charNum].characterObj[itemObj.bucket as keyof characterObjType]:", preParseData[charNum].characterObj[key as keyof characterObjType])
+
+                
+
                 preParseData[charNum].characterObj[
                   key as keyof characterObjType
                 ].push(itemObj);
               }
             }
           }
+          // return preParseData;
+}
+
+
+
+
+
+
           // After for loop has iterated on the preParseData
           // const parseData = preParseData
           // console.log("🚀 ~ parseCharInv ~ parseData:", parseData)
@@ -635,63 +786,6 @@ SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.buck
     // fetchAuthToken();
   }, []);
 
-  // ! Figure out how you want to structure the function to call the DB, and get items out of it
-  // ! likely need to set up the DB accessing object for mapping onto the correct table based
-  // ! on the place it's being called from. Also need to chunk the requests for efficiency.
-  // ! Previous attempt to get SQL query chunking up and running
-
-  // function queryString(manifestTable : string, hashArray : Array<number>) {
-  //   let query = `USE DATABASE Manifest.sqlite;`
-  //   // let query = ``
-
-  //   // console.log(hashArray.length)
-  //   hashArray.forEach((hash : number) => {
-  //   // console.log("🚀 ~ hashArray.forEach ~ hash:", hash)
-
-  //     query = query.concat(' ', `SELECT * FROM ${manifestTable} WHERE id + 4294967296 = ${hash} OR id = ${hash};
-  //   UNION;`)
-  //   })
-  //   // console.log("🚀 ~ queryString ~ query:", query)
-  //   query = query.slice(0,-8).concat('', ';')
-  //   // query = query.slice(0,-6)
-  //   // console.log("🚀 ~ queryString ~ querySLICE:", query)
-  //   // query = query.
-  //   return query;
-  // }
-
-  // const dbQuery = queryString(table, kineticHashObj).trim();
-  // // console.log("🚀 ~ getInventory ~ dbQuery:", dbQuery)
-  // // console.log("🚀 ~ getInventory ~ dbQuery:", dbQuery.slice(30))
-
-  // // const testQuery = `SELECT * FROM ${table} WHERE id + 4294967296 = ${hash} OR id = ${hash}
-  // //   UNION
-  // //   SELECT * FROM ${table} WHERE id + 4294967296 = ${hash2} OR id = ${hash2}`
-  // // console.log("🚀 ~ getInventory ~ testQuery:", testQuery)
-
-  //   //           const result = await db.sql`
-  //   // USE DATABASE Manifest.sqlite;
-  //   // SELECT * FROM ${table} WHERE id + 4294967296 = ${hash} OR id = ${hash}
-  //   // UNION
-  //   // SELECT * FROM ${table} WHERE id + 4294967296 = ${hash2} OR id = ${hash2}
-  //   // ORDER BY id;`;
-  //   // // // const result = await db.sql`
-  //   // // // USE DATABASE Manifest.sqlite;
-  //   // // // SELECT * FROM ${table} WHERE id + 4294967296 = ${hash} OR id = ${hash};`;
-  //   // console.log("🚀 ~ getInventory ~ result:", result);
-  //   // try {
-  //   // const result2 = await db.sql`${dbQuery}`;
-  //   //           console.log("🚀 ~ getInventory ~ result2:", result2)
-  //   // } catch (error) {
-  //     //   console.log('Error executing query:', error)
-  //     //   throw error
-  //     // }
-
-  //     // const result3 = await db.sql`
-  //     // USE DATABASE Manifest.sqlite; ${testQuery} ORDER BY id;`;
-  //     //           console.log("🚀 ~ getInventory ~ result2:", result3)
-
-  //             // setData(result);
-
   return (
     <>
       <div className="header">
@@ -704,7 +798,6 @@ SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.buck
         ) : (
           <a href={import.meta.env.VITE_AUTHORISATION_URL}>
             <button className="loginBtn">Login</button>
-            {/* Login */}
           </a>
         )}
       </div>
@@ -716,7 +809,6 @@ SELECT * FROM DestinyInventoryBucketDefinition WHERE id + 4294967296 = ${id.buck
         {data ? (
           <Characters {...{ data }} />
         ) : (
-          // <p>test</p>
           <p className="placeholder">Awaiting character data</p>
         )}
       </div>

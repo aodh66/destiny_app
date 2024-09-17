@@ -69,7 +69,9 @@
 .loadingMessage {
   margin-bottom: -2em;
   font-size: 0.8em;
-  pointer-events: none
+  pointer-events: none;
+  // z-index: 1;
+  // position: absolute;
 }
 
 .transparent {
@@ -78,11 +80,20 @@
 }
 
 .character {
-  border: 1px solid red;
+  // border: 1px solid red;
 }
 
 .bucket {
   border: 1px solid blue;
+}
+
+.bucketTitle {
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.bucketContent {
+  display: flex;
 }
 
 .charHead {
@@ -96,6 +107,7 @@
 .charTitle {
   // justify-self: center;
   margin: 0;
+  font-size: 2em;
 }
 
 .charIcon {
@@ -109,8 +121,42 @@
   gap: 1em;
 }
 
-.itemIcon {
+// .true {
+//   // background-color: red;
+//   border: 1px solid green;
+// }
+
+// .true .itemName {
+//   // background-color: red;
+//   border-bottom: 3px solid green;
+// }
+
+.true .itemIcon {
+  // background-color: red;
+  border: 3px solid green;
+}
+
+.iconBox {
+  display: flex;
+  width: 3em;
   height: 3em;
+}
+
+.itemIcon {
+  position: absolute;
+  aspect-ratio: 1 / 1;
+  height: 3em;
+  width: auto;
+  // z-index: 0;
+}
+
+.itemInstance {
+  // position: absolute;
+  z-index: 1;
+  // outline: 1px solid black;
+  margin: 0;
+  font-weight: 900;
+  -webkit-text-stroke: 1px black;
 }
 
 .itemInfo {
@@ -121,8 +167,20 @@
 }
 
 .itemName,
-.itemRarity,
-.itemFlavourText {
+.itemRarity {
   margin-bottom: 0;
   font-size: 0.8em;
+}
+
+.itemFlavourText {
+  margin-bottom: 0;
+  font-size: 0.6em;
+}
+
+.ship,
+.subclass,
+.emblem,
+.ghost,
+.sparrow {
+display: none;
 }

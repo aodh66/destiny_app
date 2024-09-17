@@ -14,20 +14,16 @@ const BucketsCard = (bucket: characterObjType) => {
     return <></>;
   }
 
-  //   Object.entries(bucket).map((value) => {
-  //       console.log("🚀 ~ BucketsCard ~ Object.entries(bucket).map ~ value:", value)
-  //     //   console.log("🚀 ~ BucketsCard ~ Object.entries(bucket).map ~ value[1][0]:", value[1][0])
-  //     //   console.log("🚀 ~ BucketsCard ~ Object.entries(bucket).map ~ value[1]:", value[1])
-  //   })
-
   return (
     <>
       {bucket &&
         Object.entries(bucket).map((value) => (
+          // if (value[0] === "subclass") {return}
           <div className={`bucket ${value[0]}`} key={value[0]}>
             <h3 className="bucketTitle">{value[1][0].bucket}</h3>
-
-            <Bucket {...value} />
+            <div className="bucketContent">
+              <Bucket {...value} />
+              </div>
           </div>
         ))}
     </>
