@@ -1,22 +1,15 @@
 import {
   itemObjType,
-  itemArrayType,
   characterObjType,
-  dataStateType,
-  userDataType,
-  characterInfoObjType,
   hashArr,
   SQLResponseArr,
   SQLResponseItem,
-  hashObj,
   singleCharacterType,
 } from "../CustomTypes";
 
-import getManifestData from "./GetManifestData";
-
 import bucketDict from "../assets/BucketDict.json";
 
-// * takes character, equipped items and uequipped items
+// * takes character, equipped items and unequipped items
 // * matches up hashes, ids and buckets
 // * pushes the items into the correct characterObj array
 // * returns updated character
@@ -43,7 +36,9 @@ async function parseCharacterInventory(
   if (!character || !characterInventory || !items || equipBool === undefined) {
     return undefined;
   }
+
   //   console.log("🚀 ~ bucketDict:", bucketDict)
+
   let itemPool: hashArr = [];
   if (equipBool === true) {
     itemPool = characterInventory.equipment.data.items;
@@ -77,7 +72,7 @@ async function parseCharacterInventory(
         itemType: itemResJson.itemTypeDisplayName,
         bucket: bucketResJson.displayProperties.name,
         equipped: equipBool,
-        instance: 0,
+        instance: "",
         itemInstanceId: id.itemInstanceId,
       };
 
@@ -105,15 +100,16 @@ async function parseCharacterInventory(
         // console.log(`key: ${key}, value: ${value}`);
         if (itemObj.bucket === value) {
           key;
-          // The hasharray is an array of objects, each with an itemhash and buckethash, so we just look through the array and compare the entries to the
+          // The hasharray is an array of objects, each with an itemhash and buckethash, so we just look through the array and compare the entries to the bucket
           let instance = 0;
           if (
             key === "kineticWeapons" ||
             key === "energyWeapons" ||
-            key === "heavyWeapons" ||
-            key === "ghost" ||
-            key === "ship" ||
-            key === "sparrow"
+            key === "heavyWeapons"
+            // ||
+            // key === "ghost" ||
+            // key === "ship" ||
+            // key === "sparrow"
           ) {
             //   preParseData.forEach(char => {
             character.characterObj[key as keyof characterObjType].forEach(
@@ -135,7 +131,9 @@ async function parseCharacterInventory(
               },
             );
           }
-          itemObj.instance = instance;
+          //   give each item a unique instance designator
+          const charNumDict = ["A", "B", "C"];
+          itemObj.instance = `${charNumDict[character.charNumber]}${instance}`;
 
           character.characterObj[key as keyof characterObjType].push(itemObj);
         }

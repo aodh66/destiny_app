@@ -9,7 +9,7 @@ type itemObjType = {
   itemType: string;
   bucket: string;
   equipped: boolean;
-  instance: number;
+  instance: string;
   itemInstanceId: number;
 };
 

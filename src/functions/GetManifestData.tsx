@@ -1,28 +1,15 @@
 import {
-  itemObjType,
-  itemArrayType,
-  characterObjType,
-  dataStateType,
-  userDataType,
-  characterInfoObjType,
   hashArr,
-  SQLResponseArr,
-  SQLResponseItem,
-  hashObj,
-  singleCharacterType,
 } from "../CustomTypes";
 
 import { Database } from "@sqlitecloud/drivers";
 
-// * takes initialisedData
-// * gets character inventories from bungie,
-// * parses them,
-// * sets them into initialisedData
-// * returns initialisedData
+// * takes manifest table and a hash array
+// * gets manifest data from SQLite Cloud
+// * returns the SQLite response
 async function getManifestData(
   manifestTable: string,
   hashArray: hashArr | undefined,
-  // hashArray2: hashArr | undefined,
 ) {
   // exit if not given a manifest table or hash array
   if (!manifestTable || !hashArray) {
@@ -42,25 +29,8 @@ async function getManifestData(
       UNION`,
       );
     });
-  } 
-  // else if (manifestTable === "DestinyInventoryBucketDefinition") {
-  //   hashArray.forEach((item) => {
-  //     query = query.concat(
-  //       " ",
-  //       `SELECT * FROM ${manifestTable} WHERE id + 4294967296 = ${item.bucketHash} OR id = ${item.bucketHash}
-  //     UNION`,
-  //     );
-  //   });
-  //   if (hashArray2) {
-  //     hashArray2.forEach((item) => {
-  //       query = query.concat(
-  //         " ",
-  //         `SELECT * FROM ${manifestTable} WHERE id + 4294967296 = ${item.bucketHash} OR id = ${item.bucketHash}
-  //         UNION`,
-  //       );
-  //     });
-  //   }
-  // }
+  }
+
   query = query.slice(0, -8).concat("", ";");
 
   try {

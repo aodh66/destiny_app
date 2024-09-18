@@ -1,16 +1,4 @@
-import {
-  itemObjType,
-  itemArrayType,
-  characterObjType,
-  dataStateType,
-  userDataType,
-  characterInfoObjType,
-  hashArr,
-  SQLResponseArr,
-  SQLResponseItem,
-  hashObj,
-  singleCharacterType,
-} from "../CustomTypes";
+import { dataStateType, singleCharacterType } from "../CustomTypes";
 
 // * takes the initialisedData and the parsed characterInventories
 // * sets the characterInventories into the initialisedData
@@ -40,7 +28,7 @@ async function setCharacterInventories(
 
     // update loadingMessage
     document.getElementsByClassName("loadingMessage")[0].innerHTML =
-    "All characters parsed.";
+      "All characters parsed.";
 
     return initialisedData;
   } catch (error) {

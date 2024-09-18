@@ -1,16 +1,4 @@
-import {
-  itemObjType,
-  itemArrayType,
-  characterObjType,
-  dataStateType,
-  userDataType,
-  characterInfoObjType,
-  hashArr,
-  SQLResponseArr,
-  SQLResponseItem,
-  hashObj,
-  singleCharacterType,
-} from "../CustomTypes";
+import { userDataType, singleCharacterType } from "../CustomTypes";
 
 import getManifestData from "./GetManifestData";
 import parseCharacterInventory from "./ParseCharacterInventory";
@@ -23,14 +11,14 @@ import parseCharacterInventory from "./ParseCharacterInventory";
 async function fetchCharacterInventory(
   character: singleCharacterType | undefined,
   userData: userDataType | undefined,
-  ) {
-    // exit if character not initialised
-    if (!character || !userData) {
-      return undefined;
-    }
-    // console.log("🚀 ~ fetchCharacterInventory ~ character:", character)
-    // return character.characterId
-    // console.log("🚀 ~ bucketDict:", bucketDict)
+) {
+  // exit if character not initialised
+  if (!character || !userData) {
+    return undefined;
+  }
+  // console.log("🚀 ~ fetchCharacterInventory ~ character:", character)
+  // return character.characterId
+  // console.log("🚀 ~ bucketDict:", bucketDict)
 
   try {
     // get character inventory from bungie
@@ -65,7 +53,7 @@ async function fetchCharacterInventory(
       // undefined,
     );
 
-    // Might just manually set the bucket data by DLing the table, only 61 entries
+    // ? Currently manually setting the bucket data with DLed table, only 61 entries
     // get the bucket data for all items
     // const bucketData = await getManifestData(
     //   "DestinyInventoryBucketDefinition",
@@ -74,8 +62,18 @@ async function fetchCharacterInventory(
     //   );
 
     // match up the data and set all of the items into the character object
-      let parsedCharacterInventory = await parseCharacterInventory(character, characterInventory, equippedItems, true);
-      parsedCharacterInventory = await parseCharacterInventory(character, characterInventory, unequippedItems, false);
+    let parsedCharacterInventory = await parseCharacterInventory(
+      character,
+      characterInventory,
+      equippedItems,
+      true,
+    );
+    parsedCharacterInventory = await parseCharacterInventory(
+      character,
+      characterInventory,
+      unequippedItems,
+      false,
+    );
 
     return parsedCharacterInventory;
   } catch (error) {
