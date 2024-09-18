@@ -15,7 +15,7 @@ import {
       // * takes userData
       // * gets character data from bungie
       // * returns characterInfo, with the char ids and basic info (userprofileresult2)
-      async function fetchCharData(userData: userDataType | undefined) {
+      async function fetchCharacterInfo(userData: userDataType | undefined) {
         // exit if userData not set
         if (!userData) {
           return undefined;
@@ -56,4 +56,4 @@ import {
         }
       }
 
-      export default fetchCharData;
+      export default fetchCharacterInfo;

@@ -4,7 +4,7 @@ import {
   characterObjType,
   dataStateType,
   userDataType,
-  characterDataObjType,
+  characterInfoObjType,
   hashArr,
   SQLResponseArr,
   SQLResponseItem,
@@ -121,12 +121,12 @@ import {
       // * takes charInv.equipment.data.items as hashArr, dataState, charNum and equipBool (could kill equipbool so it does equipped items first and sets their equip satus to true)
       // * calls SQL server to get parsed item info, sets it into individual items, pushes that into the correct arrays on dataState, calls setData()
       // * returns dataState as parseData
-      type hashArr = [
-        {
-          itemHash: number;
-          bucketHash: number;
-        },
-      ];
+      // type hashArr = [
+      //   {
+      //     itemHash: number;
+      //     bucketHash: number;
+      //   },
+      // ];
       async function parseCharInv(
         hashArray: hashArr,
         equipBool: boolean,

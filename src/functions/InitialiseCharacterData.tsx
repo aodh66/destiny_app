@@ -15,7 +15,7 @@ import {
       // * takes characterInfo
       // * initialises the big data object, sets its values with the characterInfo stuff, sets the race and class
       // * returns initialisedData
-      async function initialiseCharData(
+      async function initialiseCharacterData(
         characterInfoObj: characterInfoObjType | undefined,
       ) {
         // console.log("🚀 ~ getAllData ~ characterInfoObj:", characterInfoObj)
@@ -101,4 +101,4 @@ import {
         }
       }
 
-      export default initialiseCharData;
+      export default initialiseCharacterData;

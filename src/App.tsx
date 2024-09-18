@@ -23,9 +23,11 @@ import Characters from "./components/Characters";
 
 import fetchAuthToken from "./functions/FetchAuthToken";
 import fetchUserData from "./functions/FetchUserData";
-import fetchCharData from "./functions/FetchCharData";
-import initialiseCharData from "./functions/InitialiseCharData";
+import fetchCharacterInfo from "./functions/FetchCharacterInfo";
+import initialiseCharacterData from "./functions/InitialiseCharacterData";
 import fetchAllCharInv from "./functions/FetchAllCharInv";
+import fetchCharacterInventory from "./functions/FetchCharacterInventory";
+import fetchAllCharacterInventories from "./functions/FetchAllCharacterInventories";
 
 function App() {
   const [loginState, setLoginState] = useState(false); // to track if it's logged in, and therefore whether the button is there
@@ -96,7 +98,7 @@ function App() {
       setLoginStateFn(userData);
       
       // * Fetch character info
-      const characterInfo = await fetchCharData(userData);
+      const characterInfo = await fetchCharacterInfo(userData);
       // console.log("🚀 ~ getAllData ~ fetchCharData ~ characterInfo:", characterInfo)
       
       // * Initialise the big character data object
@@ -104,15 +106,35 @@ function App() {
       // return
         // initialisedData object
         // undefined if err
-        const initialisedData = await initialiseCharData(characterInfo);
+        const initialisedData = await initialiseCharacterData(characterInfo);
         // console.log("🚀 ~ getAllData ~ initialiseCharData ~ initialisedData:", initialisedData)
       
+      // have 3 separate fetches and parses
+      // So have if statement chain
+      // Check characterInfo.characterIds array length, and call based on that
+        // If >=1 then first char, 2 then second etc
+      // Each function can be a black box for fetching and parsing
+      // Would return them in charInventory 1, 2 and 3
+      // let characterInventory1 : characterObjType | undefined;
+      // // const numOfChars = characterInfo.characterIds.length;
+      // if (characterInfo.characterIds.length === 0 || characterInfo.characterIds.length === undefined) {
+        
+      // }
+      // fetchCharacterInventory();
+      
+      const parsedData = await fetchAllCharacterInventories(initialisedData);
+        
+      // function that takes in all of the parsed charInventories
+        // maps the data onto the initialisedData
+        // returns parsedData
+        // Aggregation function would take initialisedData object, plus all charInventory objects
+          // In props you can have the char objects be charObj type or undefined
+          // Do a check for each one
+          // If true, map it's values onto the applicable initialisedData character section
+          // Return the parsedData object
 
-
-
-
-
-
+      // function to setData so the page updates and renders the data
+      // setData
 
 
       
