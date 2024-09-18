@@ -83,7 +83,7 @@ async function initialiseCharacterData(
     document.getElementsByClassName("loadingMessage")[0].innerHTML =
       "Character data initialised.";
 
-    console.log("🚀 ~ initialisedData:", initialisedData);
+    // console.log("🚀 ~ initialiseCharacterData ~ initialisedData:", initialisedData);
     return initialisedData;
   } catch (error) {
     console.log("🚀 ~ initialiseCharacterData ~ error:", error);

@@ -10,7 +10,7 @@ async function fetchCharacterInfo(userData: userDataType | undefined) {
   if (!userData) {
     return undefined;
   }
-  console.log("🚀 ~ fetchCharacterInfo ~ userData:", userData);
+  // console.log("🚀 ~ fetchCharacterInfo ~ userData:", userData);
 
   try {
     // get characterData
@@ -53,7 +53,7 @@ async function fetchCharacterInfo(userData: userDataType | undefined) {
       characterIds: characterIds,
       characterData: characterData.Response.characters.data,
     };
-    console.log("🚀 ~ fetchCharData ~ characterInfoObj:", characterInfoObj);
+    // console.log("🚀 ~ fetchCharacterInfo ~ characterInfoObj:", characterInfoObj);
 
     document.getElementsByClassName("loadingMessage")[0].innerHTML =
       "Character data received.";
