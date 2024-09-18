@@ -20,6 +20,7 @@ import {
         if (!userData) {
           return undefined;
         }
+        console.log("🚀 ~ fetchCharacterInfo ~ userData:", userData)
 
         try {
               // get characterData
@@ -52,7 +53,7 @@ import {
 
           return characterInfoObj;
         } catch (error) {
-          console.log("🚀 ~ fetchCharData ~ error:", error);
+          console.log("🚀 ~ fetchCharacterInfo ~ error:", error);
         }
       }
 

@@ -41,6 +41,7 @@ import {
                 raceHash: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].raceHash}`,
                 classType: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].classType}`,
                 classHash: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].classHash}`,
+                charNumber: index,
                 race: "",
                 class: "",
                 emblemBackgroundPath: `${characterInfoObj.characterData[characterInfoObj.characterIds[index]].emblemBackgroundPath}`,
@@ -97,7 +98,7 @@ import {
           console.log("🚀 ~ initialisedData:", initialisedData)
           return initialisedData;
         } catch (error) {
-          console.log("🚀 ~ initialiseCharData ~ error:", error);
+          console.log("🚀 ~ initialiseCharacterData ~ error:", error);
         }
       }
 

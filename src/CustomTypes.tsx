@@ -41,6 +41,7 @@ type singleCharacterType = {
   raceHash: string;
   classType: string;
   classHash: string;
+  charNumber: number;
   race: string;
   class: string;
   emblemBackgroundPath: string;

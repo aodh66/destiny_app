@@ -25,50 +25,29 @@ import fetchAuthToken from "./functions/FetchAuthToken";
 import fetchUserData from "./functions/FetchUserData";
 import fetchCharacterInfo from "./functions/FetchCharacterInfo";
 import initialiseCharacterData from "./functions/InitialiseCharacterData";
-import fetchAllCharInv from "./functions/FetchAllCharInv";
-import fetchCharacterInventory from "./functions/FetchCharacterInventory";
+// import fetchCharacterInventory from "./functions/FetchCharacterInventory";
 import fetchAllCharacterInventories from "./functions/FetchAllCharacterInventories";
 
 function App() {
   const [loginState, setLoginState] = useState(false); // to track if it's logged in, and therefore whether the button is there
   const [data, setData] = useState<dataStateType | undefined>(undefined); // * for the initial load data?, or do I separate it into the individual sections?
-
-  // const hashDict = {
-  //   DestinyActivityDefinition: "activityHash",
-  //   DestinyActivityTypeDefinition: "activityTypeHash",
-  //   DestinyClassDefinition: "classHash",
-  //   DestinyGenderDefinition: "genderHash",
-  //   DestinyInventoryBucketDefinition: "bucketHash",
-  //   DestinyInventoryItemDefinition: "itemHash",
-  //   DestinyProgressionDefinition: "progressionHash",
-  //   DestinyRaceDefinition: "raceHash",
-  //   DestinyTalentGridDefinition: "gridHash",
-  //   DestinyUnlockFlagDefinition: "flagHash",
-  //   DestinyHistoricalStatsDefinition: "statId",
-  //   DestinyDirectorBookDefinition: "bookHash",
-  //   DestinyStatDefinition: "statHash",
-  //   DestinySandboxPerkDefinition: "perkHash",
-  //   DestinyDestinationDefinition: "destinationHash",
-  //   DestinyPlaceDefinition: "placeHash",
-  //   DestinyActivityBundleDefinition: "bundleHash",
-  //   DestinyStatGroupDefinition: "statGroupHash",
-  //   DestinySpecialEventDefinition: "eventHash",
-  //   DestinyFactionDefinition: "factionHash",
-  //   DestinyVendorCategoryDefinition: "categoryHash",
-  //   DestinyEnemyRaceDefinition: "raceHash",
-  //   DestinyScriptedSkullDefinition: "skullHash",
-  //   DestinyGrimoireCardDefinition: "cardId",
-  // };
-
-  // dataStateType;
-  // hashDict;
-  // setData(null)
-  // authToken;
-  // data;
-
+  
   // * UseEffect that logs in the user and then gets their character inventories to set the data object
   useEffect(() => {
     async function getAllData() {
+      // ! Get new buckets obj in the browser console
+        // const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
+      
+        // let query = `USE DATABASE Manifest.sqlite;
+        // SELECT * FROM DestinyInventoryBucketDefinition;`;
+      
+        // try {
+        //   const queryResult = await db.sql(query);
+        //   console.log("🚀 ~ buckets:", queryResult)
+        // } catch (error) {
+        //   console.log("🚀 ~ getItemData ~ error:", error);
+        // }
+
       // * Fetch auth token
         // if params are in the url, fetch the auth token and set it in local storage
         // return 
@@ -122,7 +101,7 @@ function App() {
       // }
       // fetchCharacterInventory();
       
-      const parsedData = await fetchAllCharacterInventories(initialisedData);
+      const parsedData = await fetchAllCharacterInventories(initialisedData, userData);
         
       // function that takes in all of the parsed charInventories
         // maps the data onto the initialisedData
@@ -147,8 +126,6 @@ function App() {
       //       for (const [key, value] of parseData[0].characterObj) {
         //         console.log(`${key}: ${value}`);
         // }
-        
-        
         
         
         
