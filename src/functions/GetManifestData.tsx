@@ -65,7 +65,7 @@ async function getManifestData(
 
   try {
     const queryResult = await db.sql(query);
-    console.log("🚀 ~ queryResult:", queryResult)
+    // console.log("🚀 ~ queryResult:", queryResult)
     return queryResult;
   } catch (error) {
     console.log("🚀 ~ getItemData ~ error:", error);

@@ -65,9 +65,7 @@ type singleCharacterType = {
   };
 };
 
-type dataStateType = singleCharacterType[
-
-];
+type dataStateType = singleCharacterType[];
 
 type userDataType = {
   membershipType: number;

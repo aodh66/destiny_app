@@ -7,16 +7,16 @@ import { Database } from "@sqlitecloud/drivers";
 
 import {
   itemObjType,
-  itemArrayType,
+  // itemArrayType,
   characterObjType,
   dataStateType,
   userDataType,
-  characterInfoObjType,
+  // characterInfoObjType,
   hashArr,
   SQLResponseArr,
   SQLResponseItem,
-  hashObj,
-  singleCharacterType,
+  // hashObj,
+  // singleCharacterType,
 } from "./CustomTypes";
 
 import Characters from "./components/Characters";
@@ -25,7 +25,6 @@ import fetchAuthToken from "./functions/FetchAuthToken";
 import fetchUserData from "./functions/FetchUserData";
 import fetchCharacterInfo from "./functions/FetchCharacterInfo";
 import initialiseCharacterData from "./functions/InitialiseCharacterData";
-// import fetchCharacterInventory from "./functions/FetchCharacterInventory";
 import fetchAllCharacterInventories from "./functions/FetchAllCharacterInventories";
 
 function App() {
@@ -86,49 +85,32 @@ function App() {
         // initialisedData object
         // undefined if err
         const initialisedData = await initialiseCharacterData(characterInfo);
-        // console.log("🚀 ~ getAllData ~ initialiseCharData ~ initialisedData:", initialisedData)
-      
-      // have 3 separate fetches and parses
-      // So have if statement chain
-      // Check characterInfo.characterIds array length, and call based on that
-        // If >=1 then first char, 2 then second etc
-      // Each function can be a black box for fetching and parsing
-      // Would return them in charInventory 1, 2 and 3
-      // let characterInventory1 : characterObjType | undefined;
-      // // const numOfChars = characterInfo.characterIds.length;
-      // if (characterInfo.characterIds.length === 0 || characterInfo.characterIds.length === undefined) {
+        // console.log("🚀 ~ getAllData ~ initialisedData:", initialisedData)
         
-      // }
-      // fetchCharacterInventory();
-      
+        // * Fetch all the inventory items from bungie
+        // * Make the SQL calls to get the manifest data
+        // * Match up all the item data and push them into the initialisedData object
+        // return
+          // parsedData object
+          // undefined if err
       const parsedData = await fetchAllCharacterInventories(initialisedData, userData);
+        // console.log("🚀 ~ getAllData ~ parsedData:", parsedData)
         
-      // function that takes in all of the parsed charInventories
-        // maps the data onto the initialisedData
-        // returns parsedData
-        // Aggregation function would take initialisedData object, plus all charInventory objects
-          // In props you can have the char objects be charObj type or undefined
-          // Do a check for each one
-          // If true, map it's values onto the applicable initialisedData character section
-          // Return the parsedData object
+      // * Set the data state
+      async function setDataStateFn(dataStateObj: dataStateType | undefined) {
+        if (!dataStateObj) {
+          return undefined;
+        } else {
+        document.getElementsByClassName(
+          "loadingMessage",
+        )[0].classList.add("transparent");
+          setData(dataStateObj);
+        }
+      }
+      // * Set the data state to render the data to the page
+      setDataStateFn(parsedData);
 
-      // function to setData so the page updates and renders the data
-      // setData
 
-
-      
-      // const parseData = await fetchAllCharInv(initialisedData, userData);
-      // // const parseData : dataStateType = await fetchAllCharInv(dataState, userData).then(setData(parseData));
-      // // console.log("🚀 ~ getAllData ~ fetchAllCharInv ~ parseData:", parseData);
-      // // await setData(parseData);
-      
-      
-      //       for (const [key, value] of parseData[0].characterObj) {
-        //         console.log(`${key}: ${value}`);
-        // }
-        
-        
-        
         
         
         

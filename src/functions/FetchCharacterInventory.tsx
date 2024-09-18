@@ -13,8 +13,7 @@ import {
 } from "../CustomTypes";
 
 import getManifestData from "./GetManifestData";
-
-import bucketDict from "../assets/BucketDict.json"
+import parseCharacterInventory from "./ParseCharacterInventory";
 
 // * takes an initialised character
 // * gets character inventory from bungie
@@ -51,7 +50,7 @@ async function fetchCharacterInventory(
     const characterInventoryResult = await characterInventoryResponse.json();
 
     const characterInventory = characterInventoryResult.Response;
-    console.log("🚀 ~ characterInventory:", characterInventory);
+    // console.log("🚀 ~ characterInventoryResult:", characterInventory);
 
     // get the equipped item info from the manifest
     const equippedItems = await getManifestData(
@@ -73,21 +72,12 @@ async function fetchCharacterInventory(
     //   characterInventory.equipment.data.items,
     //   characterInventory.inventory.data.items,
     //   );
-    bucketDict; // This is the bucket data
 
+    // match up the data and set all of the items into the character object
+      let parsedCharacterInventory = await parseCharacterInventory(character, characterInventory, equippedItems, true);
+      parsedCharacterInventory = await parseCharacterInventory(character, characterInventory, unequippedItems, false);
 
-
-
-
-
-
-      
-    //   each one, we get the item info from the manifest,
-
-    // TODO match up the data and set all of the items into the character object
-    //   const parsedCharacterInventory = await parseCharacterInventory(character, equippedItems, unequippedItems, bucketData);
-
-    // return parsedCharacterInventory;
+    return parsedCharacterInventory;
   } catch (error) {
     console.log("🚀 ~ fetchCharacterInventory ~ error:", error);
   }

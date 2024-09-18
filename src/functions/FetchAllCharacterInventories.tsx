@@ -60,11 +60,11 @@ import {
     //           }
     //         }
     //       }
-          
-          if (initialisedData.length >= 1) {
-            const promises = [fetchCharacterInventory(initialisedData[0], userData)];
-            
-            if (initialisedData.length >= 2) {
+    
+    if (initialisedData.length >= 1) {
+      const promises = [fetchCharacterInventory(initialisedData[0], userData)];
+      
+      if (initialisedData.length >= 2) {
               promises.push(fetchCharacterInventory(initialisedData[1], userData));
               
               if (initialisedData.length === 3) {
@@ -73,8 +73,28 @@ import {
             }
             
             const [charInventory1, charInventory2, charInventory3] = await Promise.all(promises);
-            console.log("🚀 ~ charInventories:", charInventory1, charInventory2, charInventory3)
-  }
-  }
+            
+            // if (initialisedData.length >= 1 && charInventory1 && charInventory1.charNumber === initialisedData[0].charNumber) {
+            //   initialisedData[0] = charInventory1
 
-  export default fetchAllCharacterInventories;
+            //   if (initialisedData.length >= 2) {
+            //       initialisedData[0] = charInventory1
+                  
+            //       if (initialisedData.length === 3) {
+            //           initialisedData[0] = charInventory1
+                        
+            //             // const parsedData = await setCharacterInventories(initialisedData, charInventory1, charInventory2, charInventory3);
+            //             // return parsedData;
+                        
+            //           }
+            //         }
+            //       }
+            // console.log("🚀 ~ charInventories:", charInventory1, charInventory2, charInventory3)
+                  
+                  const parsedData = await setCharacterInventories(initialisedData, charInventory1, charInventory2, charInventory3);
+                  // console.log("🚀 ~ parsedData:", parsedData)
+                  return parsedData;
+          }
+        }
+        
+        export default fetchAllCharacterInventories;

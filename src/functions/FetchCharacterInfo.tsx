@@ -39,8 +39,24 @@ import {
                 // console.log("🚀 ~ getAllData ~ characterData:", characterData.Response.characters.data)
                 
                 // get characterIDs
-          const characterIds = Object.getOwnPropertyNames(characterData.Response.characters.data)
-          // console.log("🚀 ~ fetchCharData ~ characterIds2:", characterIds)
+                const userProfileResponse = await fetch(
+                  `https://www.bungie.net/Platform/Destiny2/${userData.membershipType}/Profile/${userData.membershipId}/?components=Profiles`,
+                  {
+                    method: "GET",
+                    headers: {
+                      "X-API-Key": `${import.meta.env.VITE_BUNGIE_API_KEY}`,
+                      Authorization: `Bearer ${JSON.parse(localStorage.getItem("localAuthToken")!).access_token}`,
+                    },
+                  },
+                );
+                const userProfileResult = await userProfileResponse.json();
+                const characterIds =
+                  userProfileResult.Response.profile.data.characterIds;
+                // console.log("🚀 ~ useEffect ~ characterIds:", characterIds)
+
+                // ? slicker way to get characterIDs with no second API call, but it's random order
+          // const characterIds = Object.getOwnPropertyNames(characterData.Response.characters.data)
+          // // console.log("🚀 ~ fetchCharData ~ characterIds2:", characterIds)
 
           const characterInfoObj = {
             characterIds: characterIds,

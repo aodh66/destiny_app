@@ -37,6 +37,11 @@ async function setCharacterInventories(
     if (initialisedData[2].characterId === characterInventory3?.characterId) {
       initialisedData[2].characterObj = characterInventory3.characterObj;
     }
+
+    // update loadingMessage
+    document.getElementsByClassName("loadingMessage")[0].innerHTML =
+    "All characters parsed.";
+
     return initialisedData;
   } catch (error) {
     console.log("🚀 ~ setCharacterInventories ~ error:", error);
