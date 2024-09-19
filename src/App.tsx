@@ -3,7 +3,13 @@ import { useState, useEffect } from "react";
 import "./App.css";
 // import mainStyles from "./main.scss";
 
-import { dataStateType, userDataType, itemArrayType, bigDataType, characterInfoObjType } from "./CustomTypes";
+import {
+  dataStateType,
+  userDataType,
+  itemArrayType,
+  bigDataType,
+  characterInfoObjType,
+} from "./CustomTypes";
 
 import Characters from "./components/Characters";
 import Vault from "./components/Vault";
@@ -66,7 +72,8 @@ function App() {
       setLoginStateFn(userData);
 
       // * Fetch character info
-      const characterInfo : characterInfoObjType | undefined = await fetchCharacterInfo(userData);
+      const characterInfo: characterInfoObjType | undefined =
+        await fetchCharacterInfo(userData);
       // console.log("🚀 ~ getAllData ~ fetchCharData ~ characterInfo:", characterInfo)
 
       // * Initialise the big character data object
@@ -77,47 +84,49 @@ function App() {
       const initialisedData = await initialiseCharacterData(characterInfo);
       // console.log("🚀 ~ getAllData ~ initialisedData:", initialisedData)
 
-      // ! Make this and fetchAllCharacterInventories run concurrently
       // * Fetch the vault contents from Bungie
-      // * Takes userData, initialises vault, makes API call, parses data
-      // * Returns vaultInventory object, with bucket arrays inside
+      //  Takes userData, initialises vault, makes API call, parses data
+      //  Returns vaultInventory object, with bucket arrays inside
       // const vaultInventory = await fetchVaultInventory(userData, characterInfo);
 
-      // // * Fetch all the inventory items from bungie
-      // // * Make the SQL calls to get the manifest data
-      // // * Match up all the item data and push them into the initialisedData object
-      // // return
-      // // parsedData object
-      // // undefined if err
+      // * Fetch all the inventory items from bungie
+      //  Make the SQL calls to get the manifest data
+      //  Match up all the item data and push them into the initialisedData object
+      // return
+      // parsedData object
+      // undefined if err
       // const parsedData = await fetchAllCharacterInventories(
       //   initialisedData,
       //   userData,
       // );
-      // // console.log("🚀 ~ getAllData ~ parsedData:", parsedData)
 
+      // * Run both the vault and character fetches in parallel
       async function fetchAllData(
-        userData : userDataType | undefined, 
-        characterInfo: characterInfoObjType | undefined, 
-        initialisedData: dataStateType | undefined) {
-          const promises : Promise<any>[] = [fetchVaultInventory(userData, characterInfo)];
-          promises.push(fetchAllCharacterInventories(
-            initialisedData,
-            userData,
-          ));
-        
-            const [vaultInventory, parsedData] =
-              await Promise.all(promises);
+        userData: userDataType | undefined,
+        characterInfo: characterInfoObjType | undefined,
+        initialisedData: dataStateType | undefined,
+      ) {
+        const promises: Promise<any>[] = [
+          fetchVaultInventory(userData, characterInfo),
+        ];
+        promises.push(fetchAllCharacterInventories(initialisedData, userData));
+
+        const [vaultInventory, parsedData] = await Promise.all(promises);
         return [vaultInventory, parsedData];
       }
-      const [vaultInventory, parsedData] = await fetchAllData(userData, characterInfo, initialisedData);
+      const [vaultInventory, parsedData] = await fetchAllData(
+        userData,
+        characterInfo,
+        initialisedData,
+      );
 
       // * Take in the parsed character data and the vault data
       // * combine them in an object and set the state
       // * Set the data state
       async function setDataStateFn(
         dataStateObj: dataStateType | undefined,
-        vaultArray: itemArrayType| undefined,
-        ) {
+        vaultArray: itemArrayType | undefined,
+      ) {
         if (!dataStateObj || !vaultArray) {
           return undefined;
         } else {
@@ -128,14 +137,13 @@ function App() {
           const bigDataObj: bigDataType = {
             vault: vaultArray,
             characters: dataStateObj,
-          }
+          };
 
           setData(bigDataObj);
         }
       }
       // * Set the data state to render the data to the page
       setDataStateFn(parsedData, vaultInventory);
-
 
       setTimeout(
         () => {
