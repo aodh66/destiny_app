@@ -1,14 +1,10 @@
-// import React from "react";
 import BucketsCard from "./BucketsCard";
 import {
-  // itemObjType,
-  // itemArrayType,
-  // characterObjType,
-  dataStateType,
+  bigDataType
 } from "../CustomTypes";
 
 type propType = {
-  data: dataStateType;
+  data: bigDataType;
 };
 
 const Characters = ({ data }: propType) => {
@@ -25,12 +21,12 @@ const Characters = ({ data }: propType) => {
 
   return (
     <>
-      {data &&
-        data.map((char) => {
-          // if (!char) {
-          //   console.log(`Character component has undefined data`);
-          //   return <></>;
-          // }
+      {data.characters &&
+        data.characters.map((char) => {
+          if (!char) {
+            console.log(`Character component has undefined data`);
+            return <></>;
+          }
           return (
             <div className="character" key={char.characterId}>
               <div className="charHead">

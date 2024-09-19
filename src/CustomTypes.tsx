@@ -34,6 +34,21 @@ type characterObjType = {
   subclass: itemArrayType;
 };
 
+type vaultObjType = {
+  kineticWeapons: itemArrayType;
+  energyWeapons: itemArrayType;
+  heavyWeapons: itemArrayType;
+  helmet: itemArrayType;
+  arms: itemArrayType;
+  chest: itemArrayType;
+  legs: itemArrayType;
+  classItem: itemArrayType;
+  ghost: itemArrayType;
+  ship: itemArrayType;
+  sparrow: itemArrayType;
+  // inventory: itemArrayType;
+};
+
 // type itemArrayType = [itemObjType];
 type singleCharacterType = {
   characterId: string;
@@ -101,6 +116,11 @@ type SQLResponseItem = {
 
 type SQLResponseArr = SQLResponseItem[]
 
+type bigDataType = {
+  vault: itemArrayType;
+  characters: dataStateType;
+}
+
 export {
   type itemObjType,
   type itemArrayType,
@@ -113,4 +133,6 @@ export {
   type SQLResponseArr,
   type SQLResponseItem,
   type hashObj,
+  type vaultObjType,
+  type bigDataType,
 };

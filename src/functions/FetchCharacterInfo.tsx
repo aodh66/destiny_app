@@ -1,5 +1,6 @@
 import {
   userDataType,
+  characterInfoObjType,
 } from "../CustomTypes";
 
 // * takes userData
@@ -49,7 +50,7 @@ async function fetchCharacterInfo(userData: userDataType | undefined) {
 
     // console.log("🚀 ~ useEffect ~ characterIds:", characterIds)
 
-    const characterInfoObj = {
+    const characterInfoObj : characterInfoObjType = {
       characterIds: characterIds,
       characterData: characterData.Response.characters.data,
     };

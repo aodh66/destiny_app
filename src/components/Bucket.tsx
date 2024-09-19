@@ -25,8 +25,14 @@ const Bucket = (bucket: value) => {
     <>
       {bucket &&
         bucket[1].map((item, key) => {
+          let uniqueKey = item.hash + key
+          let id;
+          if (!isNaN(item.itemInstanceId)) {
+            uniqueKey = item.itemInstanceId + key
+            id = item.itemInstanceId
+          }
           return (
-            <div className="item" key={item.hash + key}>
+            <div className="item" key={uniqueKey}  id={`${id}`}>
               <ItemCard {...item} />
             </div>
           );
