@@ -74,6 +74,7 @@ async function fetchCharacterInventory(
       unequippedItems,
       false,
     );
+      // console.log("🚀 ~ unequippedItems:", unequippedItems)
 
     return parsedCharacterInventory;
   } catch (error) {
