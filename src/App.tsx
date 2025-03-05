@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 // import "./main.scss";
 import "./App.css";
 // import mainStyles from "./main.scss";
+import manifest from './functions/manifest/node/index.js';
 
 import {
   dataStateType,
@@ -28,6 +29,23 @@ function App() {
   // * UseEffect that logs in the user and then gets their character inventories to set the data object
   useEffect(() => {
     async function getAllData() {
+      // ! MANIFEST DOWNLOAD TEST
+      // ! ------------------------------------------------------------------------------
+      // Test stuff
+      manifest.verbose();
+(async () => {
+  console.log('loading manifest');
+  await manifest.load();
+  console.log('manifest should be loaded');
+
+  console.log('getting kindled orchid by hash');
+  console.log(manifest.get('DestinyInventoryItemDefinition', 2575506895)?.displayProperties);
+
+  console.log('finding Primeval Prime by name');
+  console.log(manifest.find('DestinyInventoryItemDefinition', 'Primeval Prime')?.[0]?.displayProperties);
+})();
+      // ! ------------------------------------------------------------------------------
+
       // ! Get new buckets obj in the browser console
       // const db = new Database(`${import.meta.env.VITE_SQLITE_CONNECTION_STRING}`);
 

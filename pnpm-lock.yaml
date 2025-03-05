@@ -17,6 +17,9 @@ importers:
       '@types/sql.js':
         specifier: ^1.4.9
         version: 1.4.9
+      bungie-api-ts:
+        specifier: ^5.1.0
+        version: 5.1.0
       express:
         specifier: ^4.19.2
         version: 4.19.2
@@ -766,6 +769,10 @@ packages:
 
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
+
+  bungie-api-ts@5.1.0:
+    resolution: {integrity: sha512-q+DCazUsgq34Q54vpHcR3WKifEPAqalTTddW4za8JxdlZF0JaNwvqNBEEa0YMPOUhbGMcJtR09dvcwjtI/ojcw==}
+    engines: {node: '>=13.2.0'}
 
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
@@ -2935,6 +2942,8 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+
+  bungie-api-ts@5.1.0: {}
 
   bytes@3.1.2: {}
 
