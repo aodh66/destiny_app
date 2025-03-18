@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 // import "./main.scss";
 import "./App.css";
 // import mainStyles from "./main.scss";
-import manifest from './functions/manifest/node/index.js';
+// import manifest from './functions/manifest/node/index.js';
 
 import {
   dataStateType,
@@ -31,19 +31,19 @@ function App() {
     async function getAllData() {
       // ! MANIFEST DOWNLOAD TEST
       // ! ------------------------------------------------------------------------------
-      // Test stuff
-      manifest.verbose();
-(async () => {
-  console.log('loading manifest');
-  await manifest.load();
-  console.log('manifest should be loaded');
+//       // Test stuff
+//       manifest.verbose();
+// (async () => {
+//   console.log('loading manifest');
+//   await manifest.load();
+//   console.log('manifest should be loaded');
 
-  console.log('getting kindled orchid by hash');
-  console.log(manifest.get('DestinyInventoryItemDefinition', 2575506895)?.displayProperties);
+//   console.log('getting kindled orchid by hash');
+//   console.log(manifest.get('DestinyInventoryItemDefinition', 2575506895)?.displayProperties);
 
-  console.log('finding Primeval Prime by name');
-  console.log(manifest.find('DestinyInventoryItemDefinition', 'Primeval Prime')?.[0]?.displayProperties);
-})();
+//   console.log('finding Primeval Prime by name');
+//   console.log(manifest.find('DestinyInventoryItemDefinition', 'Primeval Prime')?.[0]?.displayProperties);
+// })();
       // ! ------------------------------------------------------------------------------
 
       // ! Get new buckets obj in the browser console

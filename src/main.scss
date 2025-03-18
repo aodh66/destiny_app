@@ -84,17 +84,20 @@
 }
 
 .bucket {
-  border: 1px solid blue;
+  // border: 1px solid blue;
 }
 
 .bucketTitle {
   margin-bottom: 0;
   text-align: left;
+  padding: 0 0.5em;
 }
 
 .bucketContent {
   display: flex;
   flex-wrap: wrap;
+  gap: 0.3em;
+  padding: 0.5em;
 }
 
 .charHead {
@@ -134,7 +137,8 @@
 
 .true .itemIcon {
   // background-color: red;
-  border: 3px solid green;
+  // border: 3px solid green;
+  filter: drop-shadow(0 0 0.5rem lime);
 }
 
 .iconBox {
